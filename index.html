@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>88Book - Cửa hàng sách trực tuyến</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/responsive.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-top">
+                <div class="logo">
+                    <h1>📚 88Book</h1>
+                </div>
+                <div class="search-bar">
+                    <input type="text" id="searchInput" placeholder="Tìm kiếm sách..." class="search-input">
+                    <button class="search-btn"><i class="fas fa-search"></i></button>
+                </div>
+                <div class="header-icons">
+                    <div class="icon-group">
+                        <button class="icon-btn" id="userBtn">
+                            <i class="fas fa-user"></i>
+                            <span>Tài khoản</span>
+                        </button>
+                    </div>
+                    <div class="icon-group">
+                        <button class="icon-btn" id="cartBtn">
+                            <i class="fas fa-shopping-cart"></i>
+                            <span class="cart-count">0</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Navigation -->
+            <nav class="navbar">
+                <div class="nav-menu" id="navMenu">
+                    <a href="#" class="nav-link active">Trang chủ</a>
+                    <a href="#" class="nav-link">Sách mới</a>
+                    <a href="#" class="nav-link">Bán chạy nhất</a>
+                    <a href="#" class="nav-link">Danh mục</a>
+                    <a href="#" class="nav-link">Liên hệ</a>
+                </div>
+                <button class="hamburger" id="hamburger">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Banner -->
+    <section class="banner">
+        <div class="banner-content">
+            <h2>Chào mừng đến với 88Book</h2>
+            <p>Khám phá hàng nghìn công trình văn học tuyệt vời</p>
+            <button class="btn btn-primary">Khám phá ngay</button>
+        </div>
+        <div class="banner-image">
+            <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 300'%3E%3Crect width='400' height='300' fill='%2365b741'/%3E%3Ctext x='50%25' y='50%25' text-anchor='middle' dy='.3em' font-size='48' fill='white' font-family='Arial'%3E📖 Sách%3C/text%3E%3C/svg%3E" alt="Banner">
+        </div>
+    </section>
+
+    <!-- Content Container -->
+    <div class="container">
+        <!-- Filter & Sort Section -->
+        <section class="filter-section">
+            <div class="filter-group">
+                <h3>Lọc theo danh mục</h3>
+                <div class="categories">
+                    <button class="category-btn active" data-category="all">Tất cả</button>
+                    <button class="category-btn" data-category="fiction">Tiểu thuyết</button>
+                    <button class="category-btn" data-category="selfhelp">Phát triển bản thân</button>
+                    <button class="category-btn" data-category="tech">Công nghệ</button>
+                    <button class="category-btn" data-category="history">Lịch sử</button>
+                </div>
+            </div>
+
+            <div class="sort-group">
+                <label for="sortBy">Sắp xếp theo:</label>
+                <select id="sortBy">
+                    <option value="newest">Mới nhất</option>
+                    <option value="price-asc">Giá: Thấp đến cao</option>
+                    <option value="price-desc">Giá: Cao đến thấp</option>
+                    <option value="popular">Phổ biến nhất</option>
+                </select>
+            </div>
+        </section>
+
+        <!-- Products Grid -->
+        <section class="products-section">
+            <h2>Sách nổi bật</h2>
+            <div class="products-grid" id="productsGrid">
+                <!-- Sách sẽ được thêm bằng JavaScript -->
+            </div>
+        </section>
+
+        <!-- Featured & Promotion -->
+        <section class="promotion-section">
+            <div class="promo-card">
+                <h3>Khuyến mãi đặc biệt</h3>
+                <p>Giảm 30% cho đơn hàng trên 300.000đ</p>
+                <button class="btn btn-secondary">Áp dụng ngay</button>
+            </div>
+            <div class="promo-card">
+                <h3>Miễn phí vận chuyển</h3>
+                <p>Cho tất cả đơn hàng từ 200.000đ</p>
+                <button class="btn btn-secondary">Tìm hiểu thêm</button>
+            </div>
+        </section>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>Về 88Book</h4>
+                    <ul>
+                        <li><a href="#">Giới thiệu</a></li>
+                        <li><a href="#">Điều khoản sử dụng</a></li>
+                        <li><a href="#">Chính sách bảo mật</a></li>
+                        <li><a href="#">Liên hệ</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Hỗ trợ khách hàng</h4>
+                    <ul>
+                        <li><a href="#">Trung tâm trợ giúp</a></li>
+                        <li><a href="#">Hóa đơn & Thanh toán</a></li>
+                        <li><a href="#">Giao hàng & Trả hàng</a></li>
+                        <li><a href="#">FAQ</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Kết nối với chúng tôi</h4>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+                <div class="footer-section">
+                    <h4>Đăng ký nhận tin</h4>
+                    <div class="newsletter">
+                        <input type="email" placeholder="Email của bạn">
+                        <button class="btn btn-primary">Đăng ký</button>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 88Book. Tất cả quyền được bảo lưu.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Cart Modal -->
+    <div class="modal" id="cartModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Giỏ hàng</h2>
+                <button class="close-btn" id="closeCart">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="cartItems" class="cart-items">
+                    <!-- Sách trong giỏ sẽ được thêm ở đây -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div class="cart-summary">
+                    <p>Tổng cộng: <span id="cartTotal">0đ</span></p>
+                </div>
+                <button class="btn btn-primary">Thanh toán</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Product Detail Modal -->
+    <div class="modal" id="productModal">
+        <div class="modal-content modal-large">
+            <button class="close-btn" id="closeProduct">&times;</button>
+            <div id="productDetail" class="product-detail">
+                <!-- Chi tiết sách sẽ được thêm ở đây -->
+            </div>
+        </div>
+    </div>
+
+    <script src="js/data.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>

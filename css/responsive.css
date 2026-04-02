@@ -1,0 +1,406 @@
+/* ==================== RESPONSIVE DESIGN ==================== */
+
+/* Tablet: 768px and below */
+@media (max-width: 768px) {
+    .header-top {
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+
+    .logo h1 {
+        font-size: 22px;
+    }
+
+    .search-bar {
+        flex: 1 1 100%;
+        margin: 0;
+        order: 3;
+    }
+
+    .header-icons {
+        gap: 15px;
+    }
+
+    .icon-btn span {
+        display: none;
+    }
+
+    .nav-menu {
+        gap: 15px;
+    }
+
+    .banner {
+        flex-direction: column;
+        text-align: center;
+        padding: 40px 20px;
+    }
+
+    .banner-content h2 {
+        font-size: 28px;
+    }
+
+    .banner-content p {
+        font-size: 16px;
+    }
+
+    .filter-section {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 20px;
+    }
+
+    .products-grid {
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 15px;
+    }
+
+    .product-image {
+        height: 200px;
+    }
+
+    .product-title {
+        font-size: 14px;
+        min-height: 35px;
+    }
+
+    .product-sale-price {
+        font-size: 16px;
+    }
+
+    .promotion-section {
+        grid-template-columns: 1fr;
+    }
+
+    .promo-card {
+        padding: 20px;
+    }
+
+    .footer-content {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+    }
+
+    .modal-content {
+        width: 95%;
+        max-height: 90vh;
+    }
+
+    .product-detail {
+        grid-template-columns: 1fr;
+    }
+
+    .detail-image {
+        font-size: 80px;
+    }
+
+    .detail-info h2 {
+        font-size: 22px;
+    }
+
+    .detail-price {
+        font-size: 24px;
+    }
+}
+
+/* Mobile: 480px and below */
+@media (max-width: 480px) {
+    :root {
+        font-size: 14px;
+    }
+
+    .container {
+        padding: 0 15px;
+    }
+
+    .header-top {
+        flex-direction: column;
+    }
+
+    .logo h1 {
+        font-size: 20px;
+        margin-bottom: 10px;
+    }
+
+    .search-bar {
+        order: 3;
+        width: 100%;
+    }
+
+    .search-input {
+        padding: 8px 12px;
+        font-size: 13px;
+    }
+
+    .header-icons {
+        width: 100%;
+        gap: 10px;
+    }
+
+    .icon-group {
+        flex: 1;
+    }
+
+    .icon-btn {
+        font-size: 16px;
+    }
+
+    /* Hamburger Menu */
+    .hamburger {
+        display: flex;
+    }
+
+    .nav-menu {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: white;
+        flex-direction: column;
+        gap: 0;
+        border-top: 2px solid #ddd;
+        box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .nav-menu.active {
+        display: flex;
+    }
+
+    .nav-link {
+        padding: 15px 20px;
+        border-bottom: 1px solid #eee;
+    }
+
+    .nav-link::after {
+        display: none;
+    }
+
+    .banner {
+        padding: 30px 15px;
+        gap: 20px;
+    }
+
+    .banner-content h2 {
+        font-size: 22px;
+    }
+
+    .banner-content p {
+        font-size: 14px;
+    }
+
+    .banner-image img {
+        max-height: 200px;
+    }
+
+    .btn {
+        padding: 10px 20px;
+        font-size: 14px;
+    }
+
+    .filter-section {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .categories {
+        gap: 8px;
+    }
+
+    .category-btn {
+        padding: 6px 12px;
+        font-size: 12px;
+    }
+
+    .sort-group {
+        width: 100%;
+    }
+
+    .sort-group select {
+        width: 100%;
+    }
+
+    .products-section h2 {
+        font-size: 22px;
+        margin-bottom: 15px;
+    }
+
+    .products-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+    }
+
+    .product-image {
+        height: 150px;
+    }
+
+    .product-info {
+        padding: 10px;
+    }
+
+    .product-title {
+        font-size: 12px;
+        min-height: 30px;
+    }
+
+    .product-author {
+        font-size: 11px;
+    }
+
+    .product-rating {
+        font-size: 10px;
+    }
+
+    .product-sale-price {
+        font-size: 14px;
+    }
+
+    .product-actions {
+        gap: 5px;
+    }
+
+    .btn-small {
+        padding: 8px;
+        font-size: 12px;
+    }
+
+    .promotion-section {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+
+    .promo-card {
+        padding: 15px;
+    }
+
+    .promo-card h3 {
+        font-size: 18px;
+    }
+
+    .promo-card p {
+        font-size: 13px;
+    }
+
+    .footer-content {
+        grid-template-columns: 1fr;
+    }
+
+    .footer-section h4 {
+        font-size: 14px;
+    }
+
+    .footer-section ul li {
+        font-size: 13px;
+    }
+
+    .newsletter {
+        flex-direction: column;
+    }
+
+    .newsletter input {
+        width: 100%;
+    }
+
+    .newsletter .btn {
+        width: 100%;
+    }
+
+    .modal-content {
+        width: 100%;
+        max-width: 100%;
+        max-height: 95vh;
+        border-radius: 15px 15px 0 0;
+    }
+
+    .modal-header {
+        padding: 15px;
+    }
+
+    .modal-header h2 {
+        font-size: 20px;
+    }
+
+    .modal-body {
+        padding: 15px;
+    }
+
+    .modal-footer {
+        padding: 15px;
+    }
+
+    .cart-item {
+        gap: 10px;
+        padding: 10px;
+    }
+
+    .cart-item-image {
+        width: 70px;
+        height: 90px;
+        font-size: 30px;
+    }
+
+    .cart-item-title {
+        font-size: 13px;
+    }
+
+    .cart-item-price {
+        font-size: 12px;
+    }
+
+    .product-detail {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    .detail-image {
+        height: 250px;
+        font-size: 80px;
+    }
+
+    .detail-info h2 {
+        font-size: 20px;
+    }
+
+    .detail-author {
+        font-size: 13px;
+    }
+
+    .detail-price {
+        font-size: 20px;
+    }
+
+    .detail-description {
+        font-size: 13px;
+    }
+
+    .detail-actions {
+        gap: 8px;
+    }
+
+    .detail-actions .btn {
+        padding: 10px 15px;
+        font-size: 14px;
+    }
+}
+
+/* Extra small: 320px and below */
+@media (max-width: 320px) {
+    .products-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .product-title {
+        font-size: 11px;
+    }
+
+    .banner {
+        padding: 20px 10px;
+    }
+
+    .banner-content h2 {
+        font-size: 18px;
+    }
+
+    .container {
+        padding: 0 10px;
+    }
+}
