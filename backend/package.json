@@ -1,0 +1,26 @@
+{
+  "name": "88book-backend",
+  "version": "1.0.0",
+  "description": "Backend for 88Book with routing, cookies, sessions, and authentication practice",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+  },
+  "keywords": [
+    "routing",
+    "cookie",
+    "session",
+    "authentication"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2",
+    "express-session": "^1.17.3",
+    "cookie-parser": "^1.4.6"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  }
+}
