@@ -32,14 +32,17 @@ export function BookCard({ book, onAddToCart, onViewDetails }: BookCardProps) {
 
   return (
     <div
-      className="group bg-card rounded-lg border border-border overflow-hidden hover:shadow-lg transition-shadow cursor-pointer"
+      className="reveal-on-scroll group relative bg-card rounded-xl border border-border/70 overflow-hidden shadow-[0_10px_30px_rgba(17,24,39,0.08)] hover:shadow-[0_16px_36px_rgba(17,24,39,0.14)] transition-all duration-300 cursor-pointer"
       onClick={handleCardClick}
     >
+      <span className="absolute top-3 left-3 z-10 rounded-full bg-amber-500 text-white text-[11px] px-2.5 py-1 font-semibold tracking-wide shadow-sm">
+        Best Seller
+      </span>
       <div className="aspect-[3/4] overflow-hidden bg-muted">
         <ImageWithFallback
           src={book.coverImage}
           alt={book.title}
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
         />
       </div>
       <div className="p-4">
@@ -61,7 +64,7 @@ export function BookCard({ book, onAddToCart, onViewDetails }: BookCardProps) {
           </span>
           <button
             onClick={handleAddToCart}
-            className="bg-accent text-accent-foreground px-3 py-2 rounded-lg hover:bg-accent/90 hover:shadow-md transition-all font-semibold text-sm"
+            className="bg-accent text-accent-foreground px-3 py-2 rounded-lg hover:bg-accent/90 hover:shadow-md transition-all duration-300 font-semibold text-sm opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0"
           >
             Add to Cart
           </button>

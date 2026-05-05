@@ -13,7 +13,20 @@ import {
 } from "./components/AccountPage";
 import { SellerDashboard } from "./components/SellerDashboard";
 import { BookDetailsModal } from "./components/BookDetailsModal";
-import { ArrowRight, Star, TrendingUp } from "lucide-react";
+import {
+  ArrowRight,
+  Star,
+  TrendingUp,
+  Sparkles,
+  FlaskConical,
+  Heart,
+  Wand2,
+  UserRound,
+  BookMarked,
+  BookHeart,
+  ChefHat,
+  Drama,
+} from "lucide-react";
 import { AuthProvider, useAuth } from "../contexts/AuthContext";
 import { CartProvider, useCart } from "../contexts/CartContext";
 import { booksAPI } from "../api/client";
@@ -270,6 +283,25 @@ function AppContent() {
     loadBooks();
   }, [selectedCategory]);
 
+  // Reveal on scroll animation
+  useEffect(() => {
+    const nodes = document.querySelectorAll(".reveal-on-scroll");
+    if (!nodes.length) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("is-visible");
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.15 },
+    );
+    nodes.forEach((node) => observer.observe(node));
+    return () => observer.disconnect();
+  }, [currentPage, books.length]);
+
   // Fetch cart when user logs in
   useEffect(() => {
     if (isAuthenticated) {
@@ -353,6 +385,18 @@ function AppContent() {
     console.log("Remove from wishlist:", bookId);
   };
 
+  const categoryIconMap: Record<string, any> = {
+    Fiction: Sparkles,
+    Mystery: Drama,
+    Science: FlaskConical,
+    Fantasy: Wand2,
+    Biography: UserRound,
+    Romance: Heart,
+    "Self-Help": BookHeart,
+    Cooking: ChefHat,
+    Classic: BookMarked,
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <Navigation
@@ -369,26 +413,28 @@ function AppContent() {
           <section className="relative py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-accent to-secondary overflow-hidden">
             {/* Background image overlay */}
             <div
-              className="absolute inset-0 opacity-20"
+              className="absolute inset-0 opacity-35"
               style={{
                 backgroundImage:
-                  'url("https://images.unsplash.com/photo-150784272343-583f20270319?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1200")',
+                  'url("https://images.unsplash.com/photo-1491841550275-ad7854e35ca6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1400")',
                 backgroundSize: "cover",
                 backgroundPosition: "center",
               }}
             />
 
             <div className="max-w-7xl mx-auto text-center relative z-10">
-              <h1 className="text-4xl sm:text-5xl lg:text-7xl font-bold mb-6 text-white drop-shadow-lg">
-                Discover Your Next Great Read
+              <h1 className="text-4xl sm:text-5xl lg:text-7xl mb-6 text-white drop-shadow-lg font-serif leading-tight">
+                Discover Stories That
+                <br />
+                Stay With You
               </h1>
-              <p className="text-lg text-white mb-8 max-w-2xl mx-auto drop-shadow">
-                Explore thousands of books from bestselling authors and indie
-                publishers
+              <p className="text-lg text-white/95 mb-8 max-w-2xl mx-auto drop-shadow">
+                Build your ideal reading ritual with curated picks from
+                bestselling authors and independent publishers.
               </p>
               <button
                 onClick={() => setCurrentPage("browse")}
-                className="inline-flex items-center justify-center px-8 py-4 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors font-semibold text-lg shadow-lg hover:shadow-xl"
+                className="inline-flex items-center justify-center px-8 py-4 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-all font-semibold text-lg shadow-lg hover:shadow-xl glow-cta"
               >
                 START SHOPPING <ArrowRight className="ml-2 h-5 w-5" />
               </button>
@@ -469,6 +515,7 @@ function AppContent() {
                   const count = books.filter(
                     (b) => b.category === category,
                   ).length;
+                  const Icon = categoryIconMap[category] || BookMarked;
                   return (
                     <button
                       key={category}
@@ -476,8 +523,9 @@ function AppContent() {
                         setSelectedCategory(category);
                         setCurrentPage("browse");
                       }}
-                      className="p-6 rounded-lg border-2 border-accent/30 hover:border-accent hover:bg-accent/10 hover:shadow-md transition-all text-center font-semibold group"
+                      className="p-6 rounded-lg border-2 border-accent/30 hover:border-accent hover:bg-accent/10 hover:shadow-md transition-all text-center font-semibold group hover:scale-[1.05]"
                     >
+                      <Icon className="w-6 h-6 mx-auto mb-2 text-accent transition-transform duration-300 group-hover:scale-110" />
                       <h3 className="font-bold mb-2 text-foreground group-hover:text-accent transition-colors">
                         {category}
                       </h3>
@@ -487,6 +535,58 @@ function AppContent() {
                     </button>
                   );
                 })}
+              </div>
+            </div>
+          </section>
+
+          {/* Reader's Choice / Social Proof */}
+          <section className="py-16 px-4 sm:px-6 lg:px-8">
+            <div className="max-w-7xl mx-auto">
+              <h2 className="text-3xl sm:text-4xl font-bold mb-2">
+                Reader&apos;s Choice
+              </h2>
+              <p className="text-muted-foreground text-lg mb-8">
+                What our readers loved most this month
+              </p>
+              <div className="flex gap-5 overflow-x-auto pb-2 snap-x">
+                {books.slice(0, 6).map((book, index) => (
+                  <article
+                    key={book.id}
+                    className="reveal-on-scroll min-w-[280px] md:min-w-[320px] bg-card border border-border rounded-xl p-5 shadow-sm snap-start"
+                  >
+                    <div className="flex items-center gap-4 mb-4">
+                      <img
+                        src={
+                          book.image_url || "https://via.placeholder.com/80x110"
+                        }
+                        alt={book.title}
+                        className="w-16 h-24 object-cover rounded-md"
+                      />
+                      <div>
+                        <h3 className="font-semibold line-clamp-2">
+                          {book.title}
+                        </h3>
+                        <p className="text-sm text-muted-foreground">
+                          {book.author}
+                        </p>
+                      </div>
+                    </div>
+                    <p className="text-sm text-muted-foreground italic">
+                      "
+                      {
+                        [
+                          "A practical and inspiring read that reshaped my daily routine.",
+                          "Could not put this down. Beautiful writing and strong ideas.",
+                          "Simple, memorable lessons I can apply immediately.",
+                          "One of the best books I have read this year.",
+                          "Perfect balance between storytelling and useful knowledge.",
+                          "A thoughtful book that keeps you reflecting for days.",
+                        ][index % 6]
+                      }
+                      "
+                    </p>
+                  </article>
+                ))}
               </div>
             </div>
           </section>
@@ -517,6 +617,73 @@ function AppContent() {
               </div>
             </div>
           </section>
+
+          {/* Newsletter Section */}
+          <section className="py-16 px-4 sm:px-6 lg:px-8 bg-muted/40">
+            <div className="max-w-3xl mx-auto text-center">
+              <h2 className="text-3xl sm:text-4xl font-bold mb-3 font-serif">
+                Join Our Newsletter
+              </h2>
+              <p className="text-muted-foreground mb-7">
+                Subscribe to receive reading recommendations and an exclusive
+                10% discount code for your first order.
+              </p>
+              <form className="flex flex-col sm:flex-row gap-3 justify-center">
+                <input
+                  type="email"
+                  required
+                  placeholder="Enter your email"
+                  className="w-full sm:w-[360px] px-4 py-3 rounded-lg border border-border bg-background focus:outline-none focus:ring-2 focus:ring-accent/40"
+                />
+                <button
+                  type="submit"
+                  className="px-6 py-3 rounded-lg bg-accent text-accent-foreground font-semibold hover:bg-accent/90 transition-colors"
+                >
+                  Subscribe
+                </button>
+              </form>
+            </div>
+          </section>
+
+          {/* Footer */}
+          <footer className="bg-primary text-primary-foreground py-14 px-4 sm:px-6 lg:px-8">
+            <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+              <div>
+                <h3 className="font-semibold text-lg mb-3">BookHaven</h3>
+                <p className="text-sm text-primary-foreground/80">
+                  A modern book marketplace where readers discover meaningful
+                  stories every day.
+                </p>
+              </div>
+              <div>
+                <h4 className="font-semibold mb-3">Quick Links</h4>
+                <ul className="space-y-2 text-sm text-primary-foreground/80">
+                  <li>Home</li>
+                  <li>Browse Books</li>
+                  <li>Best Sellers</li>
+                  <li>New Releases</li>
+                </ul>
+              </div>
+              <div>
+                <h4 className="font-semibold mb-3">Customer Support</h4>
+                <ul className="space-y-2 text-sm text-primary-foreground/80">
+                  <li>Contact Us</li>
+                  <li>Shipping Policy</li>
+                  <li>Return & Refund</li>
+                  <li>FAQ</li>
+                </ul>
+              </div>
+              <div>
+                <h4 className="font-semibold mb-3">Social</h4>
+                <ul className="space-y-2 text-sm text-primary-foreground/80">
+                  <li>Facebook</li>
+                  <li>Instagram</li>
+                  <li>YouTube</li>
+                  <li>TikTok</li>
+                </ul>
+              </div>
+            </div>
+          </footer>
         </main>
       )}
 
