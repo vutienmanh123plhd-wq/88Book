@@ -201,7 +201,3 @@ FRONTEND_URL=http://localhost:5173
 ```env
 VITE_API_URL=http://localhost:5000/api
 ```
-
----
-
-Neu ban muon, minh co the update tiep README theo dang "tai lieu nop mon" (co sequence diagram + bang mapping chuc nang -> endpoint -> bang DB) de doc/bao cao de hon.
