@@ -7,6 +7,8 @@ interface BrowsePageProps {
   onAddToCart: (book: Book) => void;
   onViewDetails?: (book: Book) => void;
   initialCategory?: string;
+  onToggleWishlist?: (book: Book) => void;
+  wishlist?: Book[];
 }
 
 const categories = [
@@ -27,6 +29,8 @@ export function BrowsePage({
   onAddToCart,
   onViewDetails,
   initialCategory = "All",
+  onToggleWishlist,
+  wishlist,
 }: BrowsePageProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState(initialCategory);
@@ -152,6 +156,8 @@ export function BrowsePage({
                 book={book}
                 onAddToCart={onAddToCart}
                 onViewDetails={onViewDetails}
+                onToggleWishlist={onToggleWishlist}
+                isWishlisted={wishlist?.some((w) => w.id.toString() === book.id.toString())}
               />
             ))}
           </div>

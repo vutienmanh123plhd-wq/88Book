@@ -150,3 +150,18 @@ export const usersAPI = {
   updateProfile: (userId, profile) =>
     apiClient.put(`/users/${userId}`, profile),
 };
+
+// Addresses API
+export const addressesAPI = {
+  getAll: () => apiClient.get("/users/addresses"),
+  add: (address) => apiClient.post("/users/addresses", address),
+  update: (id, address) => apiClient.put(`/users/addresses/${id}`, address),
+  delete: (id) => apiClient.delete(`/users/addresses/${id}`),
+};
+
+// Wishlist API
+export const wishlistAPI = {
+  getAll: () => apiClient.get("/users/wishlist"),
+  add: (bookId) => apiClient.post("/users/wishlist", { bookId }),
+  remove: (bookId) => apiClient.delete(`/users/wishlist/${bookId}`),
+};

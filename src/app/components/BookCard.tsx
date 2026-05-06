@@ -17,9 +17,11 @@ interface BookCardProps {
   book: Book;
   onAddToCart: (book: Book) => void;
   onViewDetails?: (book: Book) => void;
+  onToggleWishlist?: (book: Book) => void;
+  isWishlisted?: boolean;
 }
 
-export function BookCard({ book, onAddToCart, onViewDetails }: BookCardProps) {
+export function BookCard({ book, onAddToCart, onViewDetails, onToggleWishlist, isWishlisted }: BookCardProps) {
   const badges = ["Bestseller", "New", "-20%"];
   const badge = badges[Number(book.id) % badges.length];
   const handleCardClick = () => {
@@ -33,6 +35,11 @@ export function BookCard({ book, onAddToCart, onViewDetails }: BookCardProps) {
     onAddToCart(book);
   };
 
+  const handleWishlistClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    onToggleWishlist?.(book);
+  };
+
   return (
     <div
       className="reveal-on-scroll book-card group relative cursor-pointer"
@@ -42,11 +49,11 @@ export function BookCard({ book, onAddToCart, onViewDetails }: BookCardProps) {
         {badge}
       </span>
       <button
-        onClick={(e) => e.stopPropagation()}
+        onClick={handleWishlistClick}
         className="absolute top-3 right-3 z-10 w-8 h-8 rounded-full bg-background/90 border border-border flex items-center justify-center hover:bg-background transition-colors"
-        aria-label="Add to wishlist"
+        aria-label={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
       >
-        <Heart className="w-4 h-4 text-accent" />
+        <Heart className={`w-4 h-4 ${isWishlisted ? "fill-accent text-accent" : "text-accent"}`} />
       </button>
       <div className="book-cover aspect-[3/4] overflow-hidden p-2">
         <ImageWithFallback

@@ -87,9 +87,10 @@ export const getUserOrders = async (req, res) => {
 
     const result = await pool.query(
       `SELECT o.*, 
-        json_agg(json_build_object('bookId', oi.book_id, 'quantity', oi.quantity, 'price', oi.price)) as items
+        json_agg(json_build_object('bookId', oi.book_id, 'bookTitle', b.title, 'quantity', oi.quantity, 'price', oi.price)) as items
        FROM orders o
        LEFT JOIN order_items oi ON o.id = oi.order_id
+       LEFT JOIN books b ON oi.book_id = b.id
        WHERE o.user_id = $1
        GROUP BY o.id
        ORDER BY o.created_at DESC`,

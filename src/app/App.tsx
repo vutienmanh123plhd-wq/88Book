@@ -33,7 +33,7 @@ import {
 } from "lucide-react";
 import { AuthProvider, useAuth } from "../contexts/AuthContext";
 import { CartProvider, useCart } from "../contexts/CartContext";
-import { booksAPI } from "../api/client";
+import { booksAPI, ordersAPI, addressesAPI, wishlistAPI } from "../api/client";
 
 // Mock book data
 const featuredBooks: Book[] = [
@@ -259,9 +259,9 @@ function AppContent() {
     joinedDate: "January 15, 2024",
   };
 
-  const mockOrders: Order[] = [];
-  const mockAddresses: Address[] = [];
-  const mockWishlist: Book[] = [];
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [addresses, setAddresses] = useState<Address[]>([]);
+  const [wishlist, setWishlist] = useState<Book[]>([]);
 
   // Fetch books on mount
   useEffect(() => {
@@ -306,10 +306,49 @@ function AppContent() {
     return () => observer.disconnect();
   }, [currentPage, books.length]);
 
-  // Fetch cart when user logs in
+  // Fetch cart and user data when user logs in
   useEffect(() => {
     if (isAuthenticated) {
       fetchCart();
+      
+      ordersAPI.getAll().then(res => {
+        if (res.success) {
+          setOrders(res.orders.map((o: any) => ({
+            id: `ORD-${o.id}`,
+            date: new Date(o.created_at).toLocaleDateString(),
+            total: Number(o.total_amount),
+            status: o.status,
+            items: o.items ? o.items.map((i: any) => ({
+              bookTitle: i.bookTitle || `Book #${i.bookId}`,
+              quantity: i.quantity,
+              price: Number(i.price)
+            })) : []
+          })));
+        }
+      });
+      
+      addressesAPI.getAll().then(res => {
+        if (res.success) setAddresses(res.addresses);
+      });
+      
+      wishlistAPI.getAll().then(res => {
+        if (res.success) {
+          setWishlist(res.wishlist.map((b: any) => ({
+             id: b.id.toString(),
+             title: b.title,
+             author: b.author,
+             price: Number(b.price),
+             coverImage: b.coverImage || "https://images.unsplash.com/photo-1544947950-fa07a98d237f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400",
+             category: b.category || "General",
+             rating: Number(b.rating) || 4.5,
+             description: b.description || "No description available"
+          })));
+        }
+      });
+    } else {
+      setOrders([]);
+      setAddresses([]);
+      setWishlist([]);
     }
   }, [isAuthenticated, fetchCart]);
 
@@ -369,24 +408,47 @@ function AppContent() {
     console.log("Update profile:", profile);
   };
 
-  const handleAddAddress = (newAddress: Omit<Address, "id">) => {
-    // This would call the API to add address
-    console.log("Add address:", newAddress);
+  const handleAddAddress = async (newAddress: Omit<Address, "id">) => {
+    const res = await addressesAPI.add(newAddress);
+    if (res.success) {
+      setAddresses(prev => [res.address, ...prev]);
+    } else {
+      alert("Failed to add address");
+    }
   };
 
-  const handleUpdateAddress = (updatedAddress: Address) => {
-    // This would call the API to update address
-    console.log("Update address:", updatedAddress);
+  const handleUpdateAddress = async (updatedAddress: Address) => {
+    const res = await addressesAPI.update(updatedAddress.id, updatedAddress);
+    if (res.success) {
+      setAddresses(prev => prev.map(a => a.id === updatedAddress.id ? res.address : a));
+    } else {
+      alert("Failed to update address");
+    }
   };
 
-  const handleDeleteAddress = (id: string) => {
-    // This would call the API to delete address
-    console.log("Delete address:", id);
+  const handleDeleteAddress = async (id: string) => {
+    const res = await addressesAPI.delete(id);
+    if (res.success) {
+      setAddresses(prev => prev.filter(a => a.id !== id));
+    } else {
+      alert("Failed to delete address");
+    }
   };
 
-  const handleRemoveFromWishlist = (bookId: string) => {
-    // This would call the API to remove from wishlist
-    console.log("Remove from wishlist:", bookId);
+  const handleToggleWishlist = async (book: Book) => {
+    if (!isAuthenticated) {
+      alert("Please login to use wishlist");
+      setCurrentPage("account");
+      return;
+    }
+    const isWishlisted = wishlist.some(b => b.id.toString() === book.id.toString());
+    if (isWishlisted) {
+      const res = await wishlistAPI.remove(book.id);
+      if (res.success) setWishlist(prev => prev.filter(b => b.id.toString() !== book.id.toString()));
+    } else {
+      const res = await wishlistAPI.add(book.id);
+      if (res.success) setWishlist(prev => [book, ...prev]);
+    }
   };
 
   const handleHeroSearch = (e: React.FormEvent) => {
@@ -522,6 +584,8 @@ function AppContent() {
                         setSelectedBook(book);
                         setIsModalOpen(true);
                       }}
+                      onToggleWishlist={handleToggleWishlist}
+                      isWishlisted={wishlist.some((w) => w.id.toString() === book.id.toString())}
                     />
                   ))}
                 </div>
@@ -822,6 +886,8 @@ function AppContent() {
             setIsModalOpen(true);
           }}
           initialCategory={selectedCategory}
+          onToggleWishlist={handleToggleWishlist}
+          wishlist={wishlist}
         />
       )}
 
@@ -862,15 +928,15 @@ function AppContent() {
       {currentPage === "account" && (
         <AccountPage
           user={mockUser}
-          orders={mockOrders}
-          addresses={mockAddresses}
-          wishlist={mockWishlist}
+          orders={orders}
+          addresses={addresses}
+          wishlist={wishlist}
           isLoggedIn={isAuthenticated}
           onUpdateProfile={handleUpdateProfile}
           onAddAddress={handleAddAddress}
           onUpdateAddress={handleUpdateAddress}
           onDeleteAddress={handleDeleteAddress}
-          onRemoveFromWishlist={handleRemoveFromWishlist}
+          onRemoveFromWishlist={(bookId) => handleToggleWishlist({ id: bookId } as any)}
           onLogout={handleLogout}
           onLogin={login}
           onRegister={register}

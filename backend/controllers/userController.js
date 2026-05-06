@@ -148,3 +148,128 @@ export const getPublicProfile = async (req, res) => {
     });
   }
 };
+
+// --- Address Management ---
+export const getUserAddresses = async (req, res) => {
+  try {
+    const userId = req.user.userId;
+    const result = await pool.query(
+      "SELECT id, label, name, street, city, state, zip_code AS \"zipCode\", country, is_default AS \"isDefault\" FROM user_addresses WHERE user_id = $1 ORDER BY is_default DESC, created_at DESC",
+      [userId]
+    );
+    res.json({ success: true, addresses: result.rows });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, message: "Error fetching addresses" });
+  }
+};
+
+export const addAddress = async (req, res) => {
+  try {
+    const userId = req.user.userId;
+    const { label, name, street, city, state, zipCode, country, isDefault } = req.body;
+    
+    if (isDefault) {
+      await pool.query("UPDATE user_addresses SET is_default = false WHERE user_id = $1", [userId]);
+    }
+    
+    const result = await pool.query(
+      "INSERT INTO user_addresses (user_id, label, name, street, city, state, zip_code, country, is_default) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING id, label, name, street, city, state, zip_code AS \"zipCode\", country, is_default AS \"isDefault\"",
+      [userId, label, name, street, city, state, zipCode, country, isDefault || false]
+    );
+    
+    res.status(201).json({ success: true, address: result.rows[0] });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, message: "Error adding address" });
+  }
+};
+
+export const updateAddress = async (req, res) => {
+  try {
+    const userId = req.user.userId;
+    const { id } = req.params;
+    const { label, name, street, city, state, zipCode, country, isDefault } = req.body;
+    
+    if (isDefault) {
+      await pool.query("UPDATE user_addresses SET is_default = false WHERE user_id = $1 AND id != $2", [userId, id]);
+    }
+    
+    const result = await pool.query(
+      "UPDATE user_addresses SET label = COALESCE($1, label), name = COALESCE($2, name), street = COALESCE($3, street), city = COALESCE($4, city), state = COALESCE($5, state), zip_code = COALESCE($6, zip_code), country = COALESCE($7, country), is_default = COALESCE($8, is_default) WHERE id = $9 AND user_id = $10 RETURNING id, label, name, street, city, state, zip_code AS \"zipCode\", country, is_default AS \"isDefault\"",
+      [label, name, street, city, state, zipCode, country, isDefault, id, userId]
+    );
+    
+    if (result.rows.length === 0) {
+      return res.status(404).json({ success: false, message: "Address not found" });
+    }
+    res.json({ success: true, address: result.rows[0] });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, message: "Error updating address" });
+  }
+};
+
+export const deleteAddress = async (req, res) => {
+  try {
+    const userId = req.user.userId;
+    const { id } = req.params;
+    const result = await pool.query("DELETE FROM user_addresses WHERE id = $1 AND user_id = $2 RETURNING id", [id, userId]);
+    
+    if (result.rows.length === 0) {
+      return res.status(404).json({ success: false, message: "Address not found" });
+    }
+    res.json({ success: true, message: "Address deleted successfully" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, message: "Error deleting address" });
+  }
+};
+
+// --- Wishlist Management ---
+export const getUserWishlist = async (req, res) => {
+  try {
+    const userId = req.user.userId;
+    const result = await pool.query(
+      `SELECT b.*, b.image_url as "coverImage" 
+       FROM wishlists w 
+       JOIN books b ON w.book_id = b.id 
+       WHERE w.user_id = $1 
+       ORDER BY w.created_at DESC`,
+      [userId]
+    );
+    res.json({ success: true, wishlist: result.rows });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, message: "Error fetching wishlist" });
+  }
+};
+
+export const addToWishlist = async (req, res) => {
+  try {
+    const userId = req.user.userId;
+    const { bookId } = req.body;
+    
+    const result = await pool.query(
+      "INSERT INTO wishlists (user_id, book_id) VALUES ($1, $2) ON CONFLICT (user_id, book_id) DO NOTHING RETURNING id",
+      [userId, bookId]
+    );
+    
+    res.status(201).json({ success: true, message: "Added to wishlist" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, message: "Error adding to wishlist" });
+  }
+};
+
+export const removeFromWishlist = async (req, res) => {
+  try {
+    const userId = req.user.userId;
+    const { bookId } = req.params;
+    await pool.query("DELETE FROM wishlists WHERE user_id = $1 AND book_id = $2", [userId, bookId]);
+    res.json({ success: true, message: "Removed from wishlist" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, message: "Error removing from wishlist" });
+  }
+};
