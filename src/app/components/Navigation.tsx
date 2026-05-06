@@ -28,27 +28,18 @@ export function Navigation({
               <span className="font-semibold text-lg text-[#5A3E2B]">BookHaven</span>
             </button>
 
+            <button
+              onClick={() => onNavigate("browse")}
+              className={`flex items-center gap-1 hover:text-foreground/80 transition-colors font-medium ${
+                currentPage === "browse"
+                  ? "text-foreground"
+                  : "text-muted-foreground"
+              }`}
+            >
+              Categories
+            </button>
+
             <div className="hidden md:flex items-center gap-6">
-              <button
-                onClick={() => onNavigate("home")}
-                className={`hover:text-foreground/80 transition-colors ${
-                  currentPage === "home"
-                    ? "text-foreground"
-                    : "text-muted-foreground"
-                }`}
-              >
-                Home
-              </button>
-              <button
-                onClick={() => onNavigate("browse")}
-                className={`hover:text-foreground/80 transition-colors ${
-                  currentPage === "browse"
-                    ? "text-foreground"
-                    : "text-muted-foreground"
-                }`}
-              >
-                Categories
-              </button>
               <button className="text-muted-foreground hover:text-foreground/80 transition-colors">
                 New Arrivals
               </button>
