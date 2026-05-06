@@ -33,7 +33,7 @@ import {
 } from "lucide-react";
 import { AuthProvider, useAuth } from "../contexts/AuthContext";
 import { CartProvider, useCart } from "../contexts/CartContext";
-import { booksAPI, ordersAPI, addressesAPI, wishlistAPI } from "../api/client";
+import { booksAPI, ordersAPI, addressesAPI, wishlistAPI, usersAPI } from "../api/client";
 
 function AppContent() {
   const [currentPage, setCurrentPage] = useState("home");
@@ -57,6 +57,24 @@ function AppContent() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [addresses, setAddresses] = useState<Address[]>([]);
   const [wishlist, setWishlist] = useState<Book[]>([]);
+
+  // Map auth user to AccountPage user profile
+  const mockUser = {
+    name: user?.fullName || "Guest",
+    email: user?.email || "",
+    phone: "",
+    joinedDate: user?.createdAt ? new Date(user.createdAt).toLocaleDateString() : ""
+  };
+
+  const handleUpdateProfile = async (profile: UserProfile) => {
+    if (!user?.id) return;
+    const res = await usersAPI.updateProfile(user.id, { fullName: profile.name, email: profile.email });
+    if (res.success) {
+      alert("Profile updated successfully!");
+    } else {
+      alert(res.message || "Failed to update profile");
+    }
+  };
 
   // Fetch books on mount
   useEffect(() => {
@@ -476,7 +494,7 @@ function AppContent() {
                 })}
               </div>
             </div>
-          </div>
+          </section>
         </main>
       )}
 
