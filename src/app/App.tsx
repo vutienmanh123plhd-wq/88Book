@@ -17,6 +17,7 @@ import {
   ArrowRight,
   Star,
   TrendingUp,
+  Search,
   Sparkles,
   FlaskConical,
   Heart,
@@ -26,6 +27,9 @@ import {
   BookHeart,
   ChefHat,
   Drama,
+  Leaf,
+  Truck,
+  ShieldCheck,
 } from "lucide-react";
 import { AuthProvider, useAuth } from "../contexts/AuthContext";
 import { CartProvider, useCart } from "../contexts/CartContext";
@@ -385,6 +389,11 @@ function AppContent() {
     console.log("Remove from wishlist:", bookId);
   };
 
+  const handleHeroSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    setCurrentPage("browse");
+  };
+
   const categoryIconMap: Record<string, any> = {
     Fiction: Sparkles,
     Mystery: Drama,
@@ -410,39 +419,70 @@ function AppContent() {
       {currentPage === "home" && (
         <main>
           {/* Hero Section */}
-          <section className="relative py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-accent to-secondary overflow-hidden">
-            {/* Background image overlay */}
+          <section className="relative py-16 px-4 sm:px-6 lg:px-8 nature-bg paper-texture overflow-hidden">
             <div
-              className="absolute inset-0 opacity-35"
+              className="absolute inset-0 opacity-25"
               style={{
                 backgroundImage:
-                  'url("https://images.unsplash.com/photo-1491841550275-ad7854e35ca6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1400")',
+                  'url("https://images.unsplash.com/photo-1512820790803-83ca734da794?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600")',
                 backgroundSize: "cover",
                 backgroundPosition: "center",
               }}
             />
-
-            <div className="max-w-7xl mx-auto text-center relative z-10">
-              <h1 className="text-4xl sm:text-5xl lg:text-7xl mb-6 text-white drop-shadow-lg font-serif leading-tight">
-                Discover Stories That
-                <br />
-                Stay With You
-              </h1>
-              <p className="text-lg text-white/95 mb-8 max-w-2xl mx-auto drop-shadow">
-                Build your ideal reading ritual with curated picks from
-                bestselling authors and independent publishers.
-              </p>
-              <button
-                onClick={() => setCurrentPage("browse")}
-                className="inline-flex items-center justify-center px-8 py-4 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-all font-semibold text-lg shadow-lg hover:shadow-xl glow-cta"
-              >
-                START SHOPPING <ArrowRight className="ml-2 h-5 w-5" />
-              </button>
+            <div className="max-w-7xl mx-auto relative z-10 grid lg:grid-cols-2 gap-10 items-center">
+              <div>
+                <h1 className="text-4xl sm:text-5xl lg:text-6xl mb-4 font-serif leading-tight text-[#3E2B1F]">
+                  Discover stories that feel like home
+                </h1>
+                <p className="text-lg text-[#5A3E2B] mb-8 max-w-xl">
+                  Tim nhung cuon sach truyen cam hung cho ban moi ngay, trong
+                  mot khong gian doc sach am cung va gan gui thien nhien.
+                </p>
+                <form
+                  onSubmit={handleHeroSearch}
+                  className="mb-5 flex items-center bg-background border border-border rounded-full px-4 h-12 shadow-sm max-w-xl"
+                >
+                  <Search className="w-4 h-4 text-muted-foreground mr-2" />
+                  <input
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="Tim ten sach, tac gia, the loai..."
+                    className="flex-1 bg-transparent border-0 focus:outline-none"
+                  />
+                  <button
+                    type="submit"
+                    className="px-4 py-1.5 rounded-full bg-primary text-primary-foreground text-sm font-semibold"
+                  >
+                    Tim
+                  </button>
+                </form>
+                <div className="flex flex-wrap gap-3">
+                  <button
+                    onClick={() => setCurrentPage("browse")}
+                    className="inline-flex items-center justify-center px-6 py-3 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-all font-semibold glow-cta"
+                  >
+                    Kham pha sach moi <ArrowRight className="ml-2 h-4 w-4" />
+                  </button>
+                  <button
+                    onClick={() => setCurrentPage("browse")}
+                    className="inline-flex items-center justify-center px-6 py-3 bg-background border border-border text-foreground rounded-lg hover:bg-secondary transition-colors font-semibold"
+                  >
+                    Xem sach ban chay
+                  </button>
+                </div>
+              </div>
+              <div className="relative">
+                <img
+                  src="https://images.unsplash.com/photo-1474932430478-367dbb6832c1?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=900"
+                  alt="Cozy reading corner"
+                  className="w-full h-[420px] object-cover rounded-[28px] border border-border shadow-[0_20px_50px_rgba(90,62,43,0.16)]"
+                />
+              </div>
             </div>
           </section>
 
           {/* Featured Books */}
-          <section className="py-16 px-4 sm:px-6 lg:px-8">
+          <section className="section-block px-4 sm:px-6 lg:px-8">
             <div className="max-w-7xl mx-auto">
               <div className="flex items-center justify-between mb-8">
                 <h2 className="text-3xl sm:text-4xl font-bold text-foreground">
@@ -489,8 +529,63 @@ function AppContent() {
             </div>
           </section>
 
+          {/* Staff Picks */}
+          <section className="section-block section-soft px-4 sm:px-6 lg:px-8">
+            <div className="max-w-7xl mx-auto">
+              <h2 className="text-3xl sm:text-4xl font-bold mb-2">Staff Picks</h2>
+              <p className="text-muted-foreground mb-8">
+                Goi y duoc chon boi team BookHaven tu nhung dau sach duoc yeu
+                thich nhat.
+              </p>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+                {books.slice(4, 7).map((book) => (
+                  <article
+                    key={`staff-${book.id}`}
+                    className="reveal-on-scroll bg-card border border-border rounded-2xl p-5"
+                  >
+                    <p className="text-xs uppercase tracking-wide text-primary mb-2">
+                      Staff recommends
+                    </p>
+                    <h3 className="text-xl font-semibold mb-1">{book.title}</h3>
+                    <p className="text-sm text-muted-foreground mb-4">
+                      by {book.author}
+                    </p>
+                    <button
+                      onClick={() => setCurrentPage("browse")}
+                      className="text-accent font-semibold hover:underline"
+                    >
+                      Read why we picked this
+                    </button>
+                  </article>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          {/* Reading Mood */}
+          <section className="section-block px-4 sm:px-6 lg:px-8">
+            <div className="max-w-7xl mx-auto section-panel p-8">
+              <h2 className="text-3xl sm:text-4xl font-bold mb-3">Reading Mood</h2>
+              <p className="text-muted-foreground mb-6">
+                Ban muon doc gi hom nay?
+              </p>
+              <div className="flex flex-wrap gap-3">
+                {["Thu gian", "Truyen cam hung", "Phieu luu", "Hoc hoi"].map(
+                  (mood) => (
+                    <button
+                      key={mood}
+                      className="px-4 py-2 rounded-full border border-border bg-background hover:bg-secondary hover:border-primary transition-all"
+                    >
+                      {mood}
+                    </button>
+                  ),
+                )}
+              </div>
+            </div>
+          </section>
+
           {/* Popular Categories Section */}
-          <section className="py-16 px-4 sm:px-6 lg:px-8 bg-muted/30">
+          <section className="section-block section-soft px-4 sm:px-6 lg:px-8">
             <div className="max-w-7xl mx-auto">
               <div className="mb-12">
                 <h2 className="text-3xl sm:text-4xl font-bold mb-2">
@@ -523,7 +618,7 @@ function AppContent() {
                         setSelectedCategory(category);
                         setCurrentPage("browse");
                       }}
-                      className="p-6 rounded-lg border-2 border-accent/30 hover:border-accent hover:bg-accent/10 hover:shadow-md transition-all text-center font-semibold group hover:scale-[1.05]"
+                      className="category-card text-center font-semibold group"
                     >
                       <Icon className="w-6 h-6 mx-auto mb-2 text-accent transition-transform duration-300 group-hover:scale-110" />
                       <h3 className="font-bold mb-2 text-foreground group-hover:text-accent transition-colors">
@@ -540,7 +635,7 @@ function AppContent() {
           </section>
 
           {/* Reader's Choice / Social Proof */}
-          <section className="py-16 px-4 sm:px-6 lg:px-8">
+          <section className="section-block px-4 sm:px-6 lg:px-8">
             <div className="max-w-7xl mx-auto">
               <h2 className="text-3xl sm:text-4xl font-bold mb-2">
                 Reader&apos;s Choice
@@ -592,7 +687,7 @@ function AppContent() {
           </section>
 
           {/* Stats Section */}
-          <section className="bg-accent/5 py-16 px-4 sm:px-6 lg:px-8">
+          <section className="section-block section-soft px-4 sm:px-6 lg:px-8">
             <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
               <div className="text-center p-6 rounded-lg hover:bg-accent/10 transition-colors">
                 <TrendingUp className="h-12 w-12 mx-auto mb-4 text-accent" />
@@ -618,9 +713,39 @@ function AppContent() {
             </div>
           </section>
 
+          {/* Why BookHaven */}
+          <section className="section-block px-4 sm:px-6 lg:px-8">
+            <div className="max-w-7xl mx-auto">
+              <h2 className="text-3xl sm:text-4xl font-bold mb-8">Why BookHaven?</h2>
+              <div className="grid md:grid-cols-3 gap-5">
+                <div className="bg-card border border-border rounded-2xl p-6">
+                  <Truck className="w-8 h-8 text-primary mb-3" />
+                  <h3 className="text-xl font-semibold mb-2">Giao hang nhanh</h3>
+                  <p className="text-muted-foreground">
+                    Van chuyen toan quoc, dong goi can than den tay ban.
+                  </p>
+                </div>
+                <div className="bg-card border border-border rounded-2xl p-6">
+                  <Leaf className="w-8 h-8 text-primary mb-3" />
+                  <h3 className="text-xl font-semibold mb-2">Than thien moi truong</h3>
+                  <p className="text-muted-foreground">
+                    Uu tien vat lieu dong goi tai che, giam tac dong moi truong.
+                  </p>
+                </div>
+                <div className="bg-card border border-border rounded-2xl p-6">
+                  <ShieldCheck className="w-8 h-8 text-primary mb-3" />
+                  <h3 className="text-xl font-semibold mb-2">Tuyen chon ky luong</h3>
+                  <p className="text-muted-foreground">
+                    Dau sach duoc danh gia chat luong boi doi ngu bien tap.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </section>
+
           {/* Newsletter Section */}
-          <section className="py-16 px-4 sm:px-6 lg:px-8 bg-muted/40">
-            <div className="max-w-3xl mx-auto text-center">
+          <section className="section-block section-soft px-4 sm:px-6 lg:px-8">
+            <div className="max-w-3xl mx-auto text-center section-panel p-8 sm:p-10">
               <h2 className="text-3xl sm:text-4xl font-bold mb-3 font-serif">
                 Join Our Newsletter
               </h2>

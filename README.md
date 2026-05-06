@@ -193,7 +193,7 @@ DB_USER=postgres
 DB_PASSWORD=your_password
 JWT_SECRET=your_secret
 JWT_EXPIRE=7d
-FRONTEND_URL=http://localhost:5173
+FRONTEND_URL=http://localhost:5174
 ```
 
 ### Frontend (`.env.local`)

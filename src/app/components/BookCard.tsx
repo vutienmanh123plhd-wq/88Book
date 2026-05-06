@@ -1,4 +1,5 @@
 import { ImageWithFallback } from "./figma/ImageWithFallback";
+import { Heart } from "lucide-react";
 
 export interface Book {
   id: string;
@@ -19,6 +20,8 @@ interface BookCardProps {
 }
 
 export function BookCard({ book, onAddToCart, onViewDetails }: BookCardProps) {
+  const badges = ["Bestseller", "New", "-20%"];
+  const badge = badges[Number(book.id) % badges.length];
   const handleCardClick = () => {
     console.log("Card clicked, book:", book);
     onViewDetails?.(book);
@@ -32,17 +35,24 @@ export function BookCard({ book, onAddToCart, onViewDetails }: BookCardProps) {
 
   return (
     <div
-      className="reveal-on-scroll group relative bg-card rounded-xl border border-border/70 overflow-hidden shadow-[0_10px_30px_rgba(17,24,39,0.08)] hover:shadow-[0_16px_36px_rgba(17,24,39,0.14)] transition-all duration-300 cursor-pointer"
+      className="reveal-on-scroll book-card group relative cursor-pointer"
       onClick={handleCardClick}
     >
-      <span className="absolute top-3 left-3 z-10 rounded-full bg-amber-500 text-white text-[11px] px-2.5 py-1 font-semibold tracking-wide shadow-sm">
-        Best Seller
+      <span className="absolute top-3 left-3 z-10 rounded-full bg-accent text-accent-foreground text-[11px] px-2.5 py-1 font-semibold tracking-wide shadow-sm">
+        {badge}
       </span>
-      <div className="aspect-[3/4] overflow-hidden bg-muted">
+      <button
+        onClick={(e) => e.stopPropagation()}
+        className="absolute top-3 right-3 z-10 w-8 h-8 rounded-full bg-background/90 border border-border flex items-center justify-center hover:bg-background transition-colors"
+        aria-label="Add to wishlist"
+      >
+        <Heart className="w-4 h-4 text-accent" />
+      </button>
+      <div className="book-cover aspect-[3/4] overflow-hidden p-2">
         <ImageWithFallback
           src={book.coverImage}
           alt={book.title}
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+          className="w-full h-full rounded-xl object-cover group-hover:scale-105 transition-transform duration-500"
         />
       </div>
       <div className="p-4">
@@ -64,7 +74,7 @@ export function BookCard({ book, onAddToCart, onViewDetails }: BookCardProps) {
           </span>
           <button
             onClick={handleAddToCart}
-            className="bg-accent text-accent-foreground px-3 py-2 rounded-lg hover:bg-accent/90 hover:shadow-md transition-all duration-300 font-semibold text-sm opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0"
+            className="bg-primary text-primary-foreground px-3 py-2 rounded-lg hover:bg-primary/90 hover:shadow-md transition-all duration-300 font-semibold text-sm opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0"
           >
             Add to Cart
           </button>

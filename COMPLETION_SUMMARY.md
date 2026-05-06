@@ -218,7 +218,7 @@ See `QUICK_START.md` for detailed steps
 
 ### Then:
 
-1. Open http://localhost:5173
+1. Open http://localhost:5174
 2. Sign up as Buyer/Seller
 3. Start shopping or selling books!
 

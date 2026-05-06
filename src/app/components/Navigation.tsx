@@ -16,16 +16,16 @@ export function Navigation({
   userRole,
 }: NavigationProps) {
   return (
-    <nav className="sticky top-0 z-50 bg-background border-b border-border">
+    <nav className="sticky top-0 z-50 bg-background/85 backdrop-blur-xl border-b border-border">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
+        <div className="flex items-center justify-between h-16 gap-4">
           <div className="flex items-center gap-8">
             <button
               onClick={() => onNavigate("home")}
               className="flex items-center gap-2 hover:opacity-70 transition-opacity"
             >
-              <BookOpen className="w-6 h-6" />
-              <span className="font-semibold text-lg">BookHaven</span>
+              <BookOpen className="w-6 h-6 text-primary" />
+              <span className="font-semibold text-lg text-[#5A3E2B]">BookHaven</span>
             </button>
 
             <div className="hidden md:flex items-center gap-6">
@@ -47,9 +47,28 @@ export function Navigation({
                     : "text-muted-foreground"
                 }`}
               >
-                Browse Books
+                Categories
+              </button>
+              <button className="text-muted-foreground hover:text-foreground/80 transition-colors">
+                New Arrivals
+              </button>
+              <button className="text-muted-foreground hover:text-foreground/80 transition-colors">
+                Bestsellers
+              </button>
+              <button className="text-muted-foreground hover:text-foreground/80 transition-colors">
+                Blog
               </button>
             </div>
+          </div>
+
+          <div className="hidden lg:flex flex-1 max-w-md">
+            <button
+              onClick={() => onNavigate("browse")}
+              className="w-full h-11 px-4 rounded-full border border-border bg-secondary/70 text-muted-foreground text-sm flex items-center gap-2 hover:border-primary transition-colors"
+            >
+              <Search className="w-4 h-4" />
+              Search by title, author, category...
+            </button>
           </div>
 
           <div className="flex items-center gap-4">

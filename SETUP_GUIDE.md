@@ -100,7 +100,7 @@ DB_NAME=book_store
 DB_USER=postgres
 DB_PASSWORD=your_postgres_password
 JWT_SECRET=your_secret_key_here
-FRONTEND_URL=http://localhost:5173
+FRONTEND_URL=http://localhost:5174
 ```
 
 ### 4. Create PostgreSQL database
@@ -152,7 +152,7 @@ npm install
 npm run dev
 ```
 
-Frontend should run on: **http://localhost:5173**
+Frontend should run on: **http://localhost:5174**
 
 ## Running the Full Application
 
@@ -172,7 +172,7 @@ npm run dev
 
 Both should be running:
 
-- Frontend: http://localhost:5173
+- Frontend: http://localhost:5174
 - Backend: http://localhost:5000
 - API: http://localhost:5000/api
 
@@ -322,7 +322,7 @@ curl -X POST http://localhost:5000/api/cart \
 ### Port Already in Use
 
 - Backend (5000): Find process using port, kill it
-- Frontend (5173): Vite will use next available port
+- Frontend (5174): Vite will use next available port
 
 ### API Not Found Errors
 

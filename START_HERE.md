@@ -52,7 +52,7 @@ npm install
 npm run dev
 ```
 
-Then open: **http://localhost:5173**
+Then open: **http://localhost:5174**
 
 ### Option B: Manual Setup (Detailed Instructions)
 
@@ -166,12 +166,12 @@ npm run dev
 ✅ You should see:
 
 ```
-Local: http://localhost:5173
+Local: http://localhost:5174
 ```
 
 ### 4️⃣ Open in Browser
 
-Go to: **http://localhost:5173**
+Go to: **http://localhost:5174**
 
 ---
 
@@ -436,7 +436,7 @@ cd backend && npm install && npm run migrate && npm run dev
 cd "Book Selling Website" && npm install && npm run dev
 ```
 
-Then open **http://localhost:5173** 🎉
+Then open **http://localhost:5174** 🎉
 
 ---
 

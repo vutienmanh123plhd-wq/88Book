@@ -36,7 +36,7 @@ services:
       DB_USER: postgres
       DB_PASSWORD: password
       JWT_SECRET: your_super_secret_jwt_key_change_this_in_production
-      FRONTEND_URL: http://localhost:5173
+      FRONTEND_URL: http://localhost:5174
     ports:
       - "5000:5000"
     depends_on:

@@ -48,13 +48,13 @@ npm install
 npm run dev
 ```
 
-✅ Frontend running on http://localhost:5173
+✅ Frontend running on http://localhost:5174
 
 ---
 
 ## 🧪 Quick Test
 
-1. **Open browser**: http://localhost:5173
+1. **Open browser**: http://localhost:5174
 2. **Sign Up**: Click Account → Sign Up as Buyer
 3. **Browse Books**: Click Browse (loads from API)
 4. **Add to Cart**: Select a book → Add to Cart

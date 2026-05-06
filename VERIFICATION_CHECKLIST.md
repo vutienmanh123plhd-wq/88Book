@@ -44,8 +44,8 @@ Use this checklist to verify everything is set up correctly.
 ### Frontend Running
 
 - [ ] Start frontend: `npm run dev`
-- [ ] Shows: "Local: http://localhost:5173"
-- [ ] Open browser: http://localhost:5173
+- [ ] Shows: "Local: http://localhost:5174"
+- [ ] Open browser: http://localhost:5174
 - [ ] Homepage loads without errors
 
 ## Application Testing
