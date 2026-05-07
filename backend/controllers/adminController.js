@@ -1,21 +1,19 @@
 import pool from "../config/database.js";
 
-export const getSellerBooks = async (req, res) => {
+export const getAdminBooks = async (req, res) => {
   try {
-    const sellerId = req.user.userId;
     const { page = 1, limit = 20 } = req.query;
     const pageNumber = Number(page);
     const pageSize = Number(limit);
     const offset = (pageNumber - 1) * pageSize;
 
     const result = await pool.query(
-      "SELECT * FROM books WHERE seller_id = $1 ORDER BY created_at DESC OFFSET $2 ROWS FETCH NEXT $3 ROWS ONLY",
-      [sellerId, offset, pageSize],
+      "SELECT * FROM books ORDER BY created_at DESC OFFSET $1 ROWS FETCH NEXT $2 ROWS ONLY",
+      [offset, pageSize],
     );
 
     const countResult = await pool.query(
-      "SELECT COUNT(*) AS count FROM books WHERE seller_id = $1",
-      [sellerId],
+      "SELECT COUNT(*) AS count FROM books",
     );
 
     res.json({
@@ -31,15 +29,13 @@ export const getSellerBooks = async (req, res) => {
     console.error(error);
     res.status(500).json({
       success: false,
-      message: "Error fetching seller books",
+      message: "Error fetching admin books",
     });
   }
 };
 
-export const getSellerOrders = async (req, res) => {
+export const getAdminOrders = async (req, res) => {
   try {
-    const sellerId = req.user.userId;
-
     const result = await pool.query(
       `SELECT 
         o.id, o.user_id, o.total_amount, o.status, o.created_at,
@@ -47,10 +43,8 @@ export const getSellerOrders = async (req, res) => {
        FROM orders o
        JOIN order_items oi ON o.id = oi.order_id
        JOIN users u ON o.user_id = u.id
-       WHERE oi.seller_id = $1
        GROUP BY o.id, o.user_id, o.total_amount, o.status, o.created_at, u.full_name, u.email
        ORDER BY o.created_at DESC`,
-      [sellerId],
     );
 
     const orders = await Promise.all(
@@ -59,8 +53,8 @@ export const getSellerOrders = async (req, res) => {
           `SELECT oi.book_id, oi.quantity, oi.price, b.title
            FROM order_items oi
            JOIN books b ON oi.book_id = b.id
-           WHERE oi.order_id = $1 AND oi.seller_id = $2`,
-          [order.id, sellerId],
+           WHERE oi.order_id = $1`,
+          [order.id],
         );
 
         return {
@@ -83,7 +77,7 @@ export const getSellerOrders = async (req, res) => {
     console.error(error);
     res.status(500).json({
       success: false,
-      message: "Error fetching seller orders",
+      message: "Error fetching admin orders",
     });
   }
 };
@@ -92,8 +86,6 @@ export const updateOrderStatus = async (req, res) => {
   try {
     const { orderId } = req.params;
     const { status } = req.body;
-    const sellerId = req.user.userId;
-
     const validStatuses = [
       "pending",
       "processing",
@@ -105,19 +97,6 @@ export const updateOrderStatus = async (req, res) => {
       return res.status(400).json({
         success: false,
         message: "Invalid status",
-      });
-    }
-
-    // Verify seller owns items in this order
-    const ownershipResult = await pool.query(
-      `SELECT COUNT(*) AS count FROM order_items WHERE order_id = $1 AND seller_id = $2`,
-      [orderId, sellerId],
-    );
-
-    if (parseInt(ownershipResult.rows[0].count) === 0) {
-      return res.status(403).json({
-        success: false,
-        message: "Unauthorized",
       });
     }
 
@@ -140,29 +119,23 @@ export const updateOrderStatus = async (req, res) => {
   }
 };
 
-export const getSellerStats = async (req, res) => {
+export const getAdminStats = async (req, res) => {
   try {
-    const sellerId = req.user.userId;
-
     const booksResult = await pool.query(
-      "SELECT COUNT(*) as total_books, SUM(quantity) as total_inventory FROM books WHERE seller_id = $1",
-      [sellerId],
+      "SELECT COUNT(*) as total_books, SUM(quantity) as total_inventory FROM books",
     );
 
     const ordersResult = await pool.query(
       `SELECT COUNT(*) as total_orders, SUM(o.total_amount) as total_revenue
        FROM order_items oi
-       JOIN orders o ON oi.order_id = o.id
-       WHERE oi.seller_id = $1`,
-      [sellerId],
+       JOIN orders o ON oi.order_id = o.id`,
     );
 
     const recentResult = await pool.query(
       `SELECT COUNT(*) as recent_orders
        FROM order_items oi
        JOIN orders o ON oi.order_id = o.id
-       WHERE oi.seller_id = $1 AND o.created_at >= DATEADD(day, -30, GETDATE())`,
-      [sellerId],
+       WHERE o.created_at >= DATEADD(day, -30, GETDATE())`,
     );
 
     res.json({

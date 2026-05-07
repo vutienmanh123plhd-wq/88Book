@@ -14,9 +14,9 @@ const router = express.Router();
 router.get("/", getAllBooks);
 router.get("/:id", getBookById);
 
-// Protected routes (sellers only)
-router.post("/", authenticateToken, authorizeRole("seller"), createBook);
-router.put("/:id", authenticateToken, authorizeRole("seller"), updateBook);
-router.delete("/:id", authenticateToken, authorizeRole("seller"), deleteBook);
+// Protected routes (admins only)
+router.post("/", authenticateToken, authorizeRole("admin"), createBook);
+router.put("/:id", authenticateToken, authorizeRole("admin"), updateBook);
+router.delete("/:id", authenticateToken, authorizeRole("admin"), deleteBook);
 
 export default router;

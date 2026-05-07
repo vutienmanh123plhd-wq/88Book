@@ -61,9 +61,9 @@ Server will run on `http://localhost:5000`
 
 - `GET /api/books` - Get all books (with filtering, pagination, search)
 - `GET /api/books/:id` - Get book details
-- `POST /api/books` - Create book (sellers only)
-- `PUT /api/books/:id` - Update book (sellers only)
-- `DELETE /api/books/:id` - Delete book (sellers only)
+- `POST /api/books` - Create book (admins only)
+- `PUT /api/books/:id` - Update book (admins only)
+- `DELETE /api/books/:id` - Delete book (admins only)
 
 ### Shopping Cart
 
@@ -80,12 +80,12 @@ Server will run on `http://localhost:5000`
 - `GET /api/orders/:orderId` - Get order details (protected)
 - `PUT /api/orders/:orderId/cancel` - Cancel order (protected)
 
-### Seller Dashboard
+### Admin Dashboard
 
-- `GET /api/seller/books` - Get seller's books (protected, sellers only)
-- `GET /api/seller/orders` - Get seller's orders (protected, sellers only)
-- `GET /api/seller/stats` - Get seller statistics (protected, sellers only)
-- `PUT /api/seller/orders/:orderId/status` - Update order status (protected, sellers only)
+- `GET /api/admin/books` - Get all books (protected, admins only)
+- `GET /api/admin/orders` - Get all orders (protected, admins only)
+- `GET /api/admin/stats` - Get store statistics (protected, admins only)
+- `PUT /api/admin/orders/:orderId/status` - Update order status (protected, admins only)
 
 ## Example Requests
 
@@ -142,7 +142,7 @@ backend/
 │   ├── bookController.js   # Book operations
 │   ├── cartController.js   # Cart operations
 │   ├── orderController.js  # Order operations
-│   └── sellerController.js # Seller operations
+│   └── adminController.js  # Admin operations
 ├── middleware/
 │   └── auth.js             # JWT authentication
 ├── routes/
@@ -150,7 +150,7 @@ backend/
 │   ├── books.js
 │   ├── cart.js
 │   ├── orders.js
-│   ├── seller.js
+│   ├── admin.js
 │   └── users.js
 ├── migrations/
 │   └── run.js              # Database schema setup
@@ -164,5 +164,5 @@ backend/
 
 - All protected endpoints require JWT token in `Authorization` header
 - Format: `Authorization: Bearer <token>`
-- Sellers can only manage their own books and orders
+- Admins manage books and orders
 - Database transactions ensure data integrity

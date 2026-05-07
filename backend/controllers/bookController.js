@@ -132,6 +132,7 @@ export const createBook = async (req, res) => {
       isbn,
       quantity,
       imageUrl,
+      image_url,
     } = req.body;
     const sellerId = req.user.userId;
 
@@ -152,7 +153,7 @@ export const createBook = async (req, res) => {
         category,
         isbn,
         quantity || 0,
-        imageUrl,
+        imageUrl || image_url,
         sellerId,
       ],
     );
@@ -183,22 +184,36 @@ export const updateBook = async (req, res) => {
       isbn,
       quantity,
       imageUrl,
+      image_url,
     } = req.body;
+    const isAdmin = req.user.role === "admin";
 
     const result = await pool.query(
-      "UPDATE books SET title = $1, author = $2, description = $3, price = $4, category = $5, isbn = $6, quantity = $7, image_url = $8, updated_at = GETDATE() OUTPUT INSERTED.* WHERE id = $9 AND seller_id = $10",
-      [
-        title,
-        author,
-        description,
-        price,
-        category,
-        isbn,
-        quantity,
-        imageUrl,
-        id,
-        req.user.userId,
-      ],
+      `UPDATE books SET title = $1, author = $2, description = $3, price = $4, category = $5, isbn = $6, quantity = $7, image_url = $8, updated_at = GETDATE() OUTPUT INSERTED.* WHERE id = $9${isAdmin ? "" : " AND seller_id = $10"}`,
+      isAdmin
+        ? [
+            title,
+            author,
+            description,
+            price,
+            category,
+            isbn,
+            quantity,
+            imageUrl || image_url,
+            id,
+          ]
+        : [
+            title,
+            author,
+            description,
+            price,
+            category,
+            isbn,
+            quantity,
+            imageUrl || image_url,
+            id,
+            req.user.userId,
+          ],
     );
 
     if (result.rows.length === 0) {
@@ -225,10 +240,11 @@ export const updateBook = async (req, res) => {
 export const deleteBook = async (req, res) => {
   try {
     const { id } = req.params;
+    const isAdmin = req.user.role === "admin";
 
     const result = await pool.query(
-      "DELETE FROM books OUTPUT DELETED.id WHERE id = $1 AND seller_id = $2",
-      [id, req.user.userId],
+      `DELETE FROM books OUTPUT DELETED.id WHERE id = $1${isAdmin ? "" : " AND seller_id = $2"}`,
+      isAdmin ? [id] : [id, req.user.userId],
     );
 
     if (result.rows.length === 0) {

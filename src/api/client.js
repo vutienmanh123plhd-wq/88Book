@@ -134,14 +134,14 @@ export const ordersAPI = {
     apiClient.put(`/orders/${orderId}/status`, { status }),
 };
 
-// Seller API
-export const sellerAPI = {
+// Admin API
+export const adminAPI = {
   getBooks: (page = 1, limit = 20) =>
-    apiClient.get(`/seller/books?page=${page}&limit=${limit}`),
-  getOrders: () => apiClient.get("/seller/orders"),
-  getStats: () => apiClient.get("/seller/stats"),
+    apiClient.get(`/admin/books?page=${page}&limit=${limit}`),
+  getOrders: () => apiClient.get("/admin/orders"),
+  getStats: () => apiClient.get("/admin/stats"),
   updateOrderStatus: (orderId, status) =>
-    apiClient.put(`/seller/orders/${orderId}/status`, { status }),
+    apiClient.put(`/admin/orders/${orderId}/status`, { status }),
 };
 
 // Users API

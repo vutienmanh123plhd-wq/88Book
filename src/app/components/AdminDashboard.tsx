@@ -10,7 +10,7 @@ import {
   CardHeader,
   CardTitle,
 } from "./ui/card";
-import { booksAPI, sellerAPI } from "../../api/client";
+import { adminAPI, booksAPI } from "../../api/client";
 
 interface BookForm {
   id?: string;
@@ -24,7 +24,7 @@ interface BookForm {
   image_url: string;
 }
 
-interface SellerBook {
+interface AdminBook {
   id: number;
   title: string;
   author: string;
@@ -34,8 +34,8 @@ interface SellerBook {
   image_url: string;
 }
 
-export function SellerDashboard() {
-  const [books, setBooks] = useState<SellerBook[]>([]);
+export function AdminDashboard() {
+  const [books, setBooks] = useState<AdminBook[]>([]);
   const [loading, setLoading] = useState(false);
   const [editing, setEditing] = useState(false);
   const [error, setError] = useState("");
@@ -51,7 +51,7 @@ export function SellerDashboard() {
     image_url: "",
   });
 
-  // Fetch seller's books
+  // Fetch admin-managed books
   useEffect(() => {
     fetchBooks();
   }, []);
@@ -59,7 +59,7 @@ export function SellerDashboard() {
   const fetchBooks = async () => {
     try {
       setLoading(true);
-      const response = await sellerAPI.getBooks();
+      const response = await adminAPI.getBooks();
       if (response.success) {
         setBooks(response.books || []);
       } else {
@@ -139,7 +139,7 @@ export function SellerDashboard() {
     setFormData({ ...formData, [fieldName]: value });
   };
 
-  const handleEdit = (book: SellerBook) => {
+  const handleEdit = (book: AdminBook) => {
     setFormData({
       id: book.id.toString(),
       title: book.title,
@@ -330,8 +330,8 @@ export function SellerDashboard() {
           <div className="lg:col-span-2">
             <Card>
               <CardHeader>
-                <CardTitle>My Books ({books.length})</CardTitle>
-                <CardDescription>Manage your book inventory</CardDescription>
+                <CardTitle>Books ({books.length})</CardTitle>
+                <CardDescription>Manage store inventory</CardDescription>
               </CardHeader>
               <CardContent>
                 {loading && <p className="text-muted-foreground">Loading...</p>}

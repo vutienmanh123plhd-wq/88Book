@@ -37,7 +37,7 @@ import userRoutes from "./routes/users.js";
 import bookRoutes from "./routes/books.js";
 import cartRoutes from "./routes/cart.js";
 import orderRoutes from "./routes/orders.js";
-import sellerRoutes from "./routes/seller.js";
+import adminRoutes from "./routes/admin.js";
 
 // API Routes
 app.use("/api/auth", authRoutes);
@@ -45,7 +45,7 @@ app.use("/api/users", userRoutes);
 app.use("/api/books", bookRoutes);
 app.use("/api/cart", cartRoutes);
 app.use("/api/orders", orderRoutes);
-app.use("/api/seller", sellerRoutes);
+app.use("/api/admin", adminRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {

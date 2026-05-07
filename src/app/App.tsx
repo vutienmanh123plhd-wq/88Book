@@ -11,7 +11,7 @@ import {
   Order,
   Address,
 } from "./components/AccountPage";
-import { SellerDashboard } from "./components/SellerDashboard";
+import { AdminDashboard } from "./components/AdminDashboard";
 import { BookDetailsModal } from "./components/BookDetailsModal";
 import {
   ArrowRight,
@@ -330,6 +330,7 @@ function AppContent() {
         userRole={user?.role}
         canGoBack={pageHistory.length > 0}
         onGoBack={handleGoBack}
+        onLogout={handleLogout}
         onSearchSubmit={handleTopSearch}
         searchSuggestions={searchSuggestions}
       />
@@ -669,8 +670,8 @@ function AppContent() {
         />
       )}
 
-      {currentPage === "seller" && user?.role === "admin" && (
-        <SellerDashboard />
+      {currentPage === "admin" && user?.role === "admin" && (
+        <AdminDashboard />
       )}
 
       <BookDetailsModal

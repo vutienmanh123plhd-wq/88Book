@@ -1,5 +1,5 @@
 import { FormEvent, useEffect, useState } from "react";
-import { ShoppingCart, BookOpen, Search, User, Package, ArrowLeft } from "lucide-react";
+import { ShoppingCart, BookOpen, Search, User, Package, ArrowLeft, LogOut } from "lucide-react";
 
 interface NavigationProps {
   cartItemCount: number;
@@ -9,6 +9,7 @@ interface NavigationProps {
   userRole?: string;
   canGoBack?: boolean;
   onGoBack?: () => void;
+  onLogout?: () => void;
   onSearchSubmit?: (query: string) => void;
   searchSuggestions?: string[];
 }
@@ -21,6 +22,7 @@ export function Navigation({
   userRole,
   canGoBack = false,
   onGoBack,
+  onLogout,
   onSearchSubmit,
   searchSuggestions = [],
 }: NavigationProps) {
@@ -130,12 +132,12 @@ export function Navigation({
             </button>
             {isLoggedIn && userRole === "admin" && (
               <button
-                onClick={() => onNavigate("seller")}
+                onClick={() => onNavigate("admin")}
                 className={`p-2 hover:bg-accent rounded-lg transition-colors ${
-                  currentPage === "seller" ? "bg-accent" : ""
+                  currentPage === "admin" ? "bg-accent" : ""
                 }`}
                 aria-label="Admin Dashboard"
-                title="Manage Books"
+                title="Admin Dashboard"
               >
                 <Package className="w-5 h-5" />
               </button>
@@ -150,6 +152,16 @@ export function Navigation({
             >
               <User className="w-5 h-5" />
             </button>
+            {isLoggedIn && onLogout && (
+              <button
+                onClick={onLogout}
+                className="p-2 hover:bg-accent rounded-lg transition-colors"
+                aria-label="Sign out"
+                title="Sign out"
+              >
+                <LogOut className="w-5 h-5" />
+              </button>
+            )}
             <button
               onClick={() => onNavigate("cart")}
               className="relative p-2 hover:bg-accent rounded-lg transition-colors"
