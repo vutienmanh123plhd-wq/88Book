@@ -1,6 +1,23 @@
 import pool from "../config/database.js";
 import bcrypt from "bcryptjs";
 
+const editableRoles = ["admin", "staff", "buyer"];
+
+const ensureStaffPicksTable = async () => {
+  await pool.query(`
+    IF OBJECT_ID('staff_picks', 'U') IS NULL
+    BEGIN
+      CREATE TABLE staff_picks (
+        id INT IDENTITY(1,1) PRIMARY KEY,
+        book_id INT NOT NULL UNIQUE,
+        sort_order INT NOT NULL DEFAULT 0,
+        created_at DATETIME DEFAULT GETDATE(),
+        CONSTRAINT FK_staff_picks_book FOREIGN KEY (book_id) REFERENCES books(id) ON DELETE CASCADE
+      );
+    END
+  `);
+};
+
 export const getAdminUsers = async (req, res) => {
   try {
     const result = await pool.query(
@@ -31,10 +48,10 @@ export const createAdminUser = async (req, res) => {
       });
     }
 
-    if (!["admin", "buyer"].includes(role)) {
+    if (!editableRoles.includes(role)) {
       return res.status(400).json({
         success: false,
-        message: "Role must be admin or buyer",
+        message: "Role must be admin, staff, or buyer",
       });
     }
 
@@ -73,10 +90,10 @@ export const updateAdminUser = async (req, res) => {
     const { userId } = req.params;
     const { email, fullName, role, password } = req.body;
 
-    if (role && !["admin", "buyer"].includes(role)) {
+    if (role && !editableRoles.includes(role)) {
       return res.status(400).json({
         success: false,
-        message: "Role must be admin or buyer",
+        message: "Role must be admin, staff, or buyer",
       });
     }
 
@@ -175,10 +192,10 @@ export const updateUserRole = async (req, res) => {
     const { userId } = req.params;
     const { role } = req.body;
 
-    if (!["admin", "buyer"].includes(role)) {
+    if (!editableRoles.includes(role)) {
       return res.status(400).json({
         success: false,
-        message: "Role must be admin or buyer",
+        message: "Role must be admin, staff, or buyer",
       });
     }
 
@@ -245,6 +262,75 @@ export const getAdminBooks = async (req, res) => {
     res.status(500).json({
       success: false,
       message: "Error fetching admin books",
+    });
+  }
+};
+
+export const getStaffPicks = async (req, res) => {
+  try {
+    await ensureStaffPicksTable();
+    const result = await pool.query(
+      `SELECT b.*, sp.sort_order
+       FROM staff_picks sp
+       JOIN books b ON sp.book_id = b.id
+       ORDER BY sp.sort_order ASC, sp.created_at ASC`,
+    );
+
+    res.json({
+      success: true,
+      books: result.rows,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      success: false,
+      message: "Error fetching staff picks",
+    });
+  }
+};
+
+export const updateStaffPicks = async (req, res) => {
+  try {
+    const { bookIds } = req.body;
+
+    if (!Array.isArray(bookIds)) {
+      return res.status(400).json({
+        success: false,
+        message: "bookIds must be an array",
+      });
+    }
+
+    const uniqueBookIds = [...new Set(bookIds.map(Number))]
+      .filter((id) => Number.isInteger(id) && id > 0)
+      .slice(0, 6);
+
+    await ensureStaffPicksTable();
+    await pool.query("DELETE FROM staff_picks");
+
+    for (const [index, bookId] of uniqueBookIds.entries()) {
+      await pool.query(
+        "INSERT INTO staff_picks (book_id, sort_order) VALUES ($1, $2)",
+        [bookId, index],
+      );
+    }
+
+    const result = await pool.query(
+      `SELECT b.*, sp.sort_order
+       FROM staff_picks sp
+       JOIN books b ON sp.book_id = b.id
+       ORDER BY sp.sort_order ASC, sp.created_at ASC`,
+    );
+
+    res.json({
+      success: true,
+      message: "Staff picks updated",
+      books: result.rows,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      success: false,
+      message: "Error updating staff picks",
     });
   }
 };

@@ -40,12 +40,13 @@ interface AdminUser {
   id: number;
   email: string;
   full_name: string;
-  role: "admin" | "buyer";
+  role: "admin" | "staff" | "buyer";
   created_at: string;
 }
 
 interface AdminDashboardProps {
   currentUserId?: number | string;
+  currentUserRole?: "admin" | "staff" | "buyer";
 }
 
 interface UserForm {
@@ -53,12 +54,16 @@ interface UserForm {
   fullName: string;
   email: string;
   password: string;
-  role: "admin" | "buyer";
+  role: "admin" | "staff" | "buyer";
 }
 
-export function AdminDashboard({ currentUserId }: AdminDashboardProps) {
+export function AdminDashboard({
+  currentUserId,
+  currentUserRole = "buyer",
+}: AdminDashboardProps) {
   const [books, setBooks] = useState<AdminBook[]>([]);
   const [users, setUsers] = useState<AdminUser[]>([]);
+  const [staffPickIds, setStaffPickIds] = useState<number[]>([]);
   const [selectedUser, setSelectedUser] = useState<AdminUser | null>(null);
   const [loading, setLoading] = useState(false);
   const [usersLoading, setUsersLoading] = useState(false);
@@ -68,6 +73,8 @@ export function AdminDashboard({ currentUserId }: AdminDashboardProps) {
   const [success, setSuccess] = useState("");
   const [userError, setUserError] = useState("");
   const [userSuccess, setUserSuccess] = useState("");
+  const [staffPickError, setStaffPickError] = useState("");
+  const [staffPickSuccess, setStaffPickSuccess] = useState("");
   const [userForm, setUserForm] = useState<UserForm>({
     fullName: "",
     email: "",
@@ -88,7 +95,10 @@ export function AdminDashboard({ currentUserId }: AdminDashboardProps) {
   // Fetch admin-managed books
   useEffect(() => {
     fetchBooks();
-    fetchUsers();
+    fetchStaffPicks();
+    if (currentUserRole === "admin") {
+      fetchUsers();
+    }
   }, []);
 
   const fetchBooks = async () => {
@@ -123,7 +133,17 @@ export function AdminDashboard({ currentUserId }: AdminDashboardProps) {
     }
   };
 
-  const handleRoleChange = async (userId: number, role: "admin" | "buyer") => {
+  const fetchStaffPicks = async () => {
+    const response = await adminAPI.getStaffPicks();
+    if (response.success) {
+      setStaffPickIds((response.books || []).map((book: AdminBook) => book.id));
+    }
+  };
+
+  const handleRoleChange = async (
+    userId: number,
+    role: "admin" | "staff" | "buyer",
+  ) => {
     setUserError("");
     setUserSuccess("");
 
@@ -215,6 +235,33 @@ export function AdminDashboard({ currentUserId }: AdminDashboardProps) {
       setUserSuccess("User deleted");
     } else {
       setUserError(response.message || "Failed to delete user");
+    }
+  };
+
+  const toggleStaffPick = (bookId: number) => {
+    setStaffPickError("");
+    setStaffPickSuccess("");
+    setStaffPickIds((prev) => {
+      if (prev.includes(bookId)) {
+        return prev.filter((id) => id !== bookId);
+      }
+      if (prev.length >= 6) {
+        setStaffPickError("Staff Picks can include up to 6 books");
+        return prev;
+      }
+      return [...prev, bookId];
+    });
+  };
+
+  const saveStaffPicks = async () => {
+    setStaffPickError("");
+    setStaffPickSuccess("");
+    const response = await adminAPI.updateStaffPicks(staffPickIds);
+    if (response.success) {
+      setStaffPickIds((response.books || []).map((book: AdminBook) => book.id));
+      setStaffPickSuccess("Staff Picks updated");
+    } else {
+      setStaffPickError(response.message || "Failed to update Staff Picks");
     }
   };
 
@@ -337,6 +384,7 @@ export function AdminDashboard({ currentUserId }: AdminDashboardProps) {
   return (
     <main className="py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
+        {currentUserRole === "admin" && (
         <Card className="mb-8">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
@@ -403,12 +451,13 @@ export function AdminDashboard({ currentUserId }: AdminDashboardProps) {
                     onChange={(e) =>
                       setUserForm({
                         ...userForm,
-                        role: e.target.value as "admin" | "buyer",
+                        role: e.target.value as "admin" | "staff" | "buyer",
                       })
                     }
                     className="h-10 w-full rounded-md border border-border bg-background px-3 text-sm"
                   >
                     <option value="buyer">Buyer</option>
+                    <option value="staff">Staff</option>
                     <option value="admin">Admin</option>
                   </select>
                 </div>
@@ -469,13 +518,14 @@ export function AdminDashboard({ currentUserId }: AdminDashboardProps) {
                             onChange={(event) =>
                               handleRoleChange(
                                 user.id,
-                                event.target.value as "admin" | "buyer",
+                                event.target.value as "admin" | "staff" | "buyer",
                               )
                             }
                             className="h-10 rounded-md border border-border bg-background px-3 text-sm disabled:opacity-60"
                             aria-label={`Role for ${user.email}`}
                           >
                             <option value="buyer">Buyer</option>
+                            <option value="staff">Staff</option>
                             <option value="admin">Admin</option>
                           </select>
                           <Button
@@ -510,6 +560,70 @@ export function AdminDashboard({ currentUserId }: AdminDashboardProps) {
                 )}
               </div>
             </div>
+          </CardContent>
+        </Card>
+        )}
+
+        <Card className="mb-8">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <ShieldCheck className="w-5 h-5" />
+              Staff Picks ({staffPickIds.length})
+            </CardTitle>
+            <CardDescription>
+              Choose books shown in the homepage Staff Picks section
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {staffPickError && (
+              <div className="bg-red-50 border border-red-200 text-red-800 px-3 py-2 rounded-lg text-sm">
+                {staffPickError}
+              </div>
+            )}
+            {staffPickSuccess && (
+              <div className="bg-green-50 border border-green-200 text-green-800 px-3 py-2 rounded-lg text-sm">
+                {staffPickSuccess}
+              </div>
+            )}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+              {books.map((book) => {
+                const checked = staffPickIds.includes(book.id);
+                return (
+                  <label
+                    key={`pick-${book.id}`}
+                    className={`border rounded-lg p-3 flex gap-3 cursor-pointer ${
+                      checked ? "border-primary bg-primary/5" : "border-border"
+                    }`}
+                  >
+                    <input
+                      type="checkbox"
+                      checked={checked}
+                      onChange={() => toggleStaffPick(book.id)}
+                      className="mt-1"
+                    />
+                    <img
+                      src={
+                        book.image_url ||
+                        "https://via.placeholder.com/120x160?text=Book"
+                      }
+                      alt={book.title}
+                      className="h-16 w-11 rounded border border-border object-cover"
+                    />
+                    <span className="min-w-0">
+                      <span className="block text-sm font-medium truncate">
+                        {book.title}
+                      </span>
+                      <span className="block text-xs text-muted-foreground truncate">
+                        {book.author}
+                      </span>
+                    </span>
+                  </label>
+                );
+              })}
+            </div>
+            <Button type="button" onClick={saveStaffPicks}>
+              Save Staff Picks
+            </Button>
           </CardContent>
         </Card>
 

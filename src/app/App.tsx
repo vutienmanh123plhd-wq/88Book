@@ -42,6 +42,7 @@ function AppContent() {
   const [browseSearchQuery, setBrowseSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [books, setBooks] = useState<Book[]>([]);
+  const [staffPicks, setStaffPicks] = useState<Book[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedBook, setSelectedBook] = useState<Book | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -91,6 +92,10 @@ function AppContent() {
         );
         if (response.success) {
           setBooks(response.books);
+        }
+        const picksResponse = await booksAPI.getStaffPicks();
+        if (picksResponse.success) {
+          setStaffPicks(picksResponse.books || []);
         }
       } catch (error) {
         console.error("Error loading books:", error);
@@ -310,6 +315,7 @@ function AppContent() {
   // Filtered books for special pages
   const newArrivals = [...books].sort((a, b) => b.id - a.id).slice(0, 12);
   const bestsellers = [...books].sort((a, b) => (Number(b.rating) || 0) - (Number(a.rating) || 0)).slice(0, 12);
+  const displayedStaffPicks = staffPicks.length > 0 ? staffPicks : books.slice(4, 7);
   const searchSuggestions = Array.from(
     new Set(
       [
@@ -458,7 +464,7 @@ function AppContent() {
                 favorite titles.
               </p>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-                {books.slice(4, 7).map((book) => (
+                {displayedStaffPicks.map((book) => (
                   <article
                     key={`staff-${book.id}`}
                     className="reveal-on-scroll bg-card border border-border rounded-2xl p-5"
@@ -670,8 +676,8 @@ function AppContent() {
         />
       )}
 
-      {currentPage === "admin" && user?.role === "admin" && (
-        <AdminDashboard currentUserId={user?.id} />
+      {currentPage === "admin" && ["admin", "staff"].includes(user?.role) && (
+        <AdminDashboard currentUserId={user?.id} currentUserRole={user?.role} />
       )}
 
       <BookDetailsModal

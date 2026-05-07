@@ -1,5 +1,20 @@
 import pool from "../config/database.js";
 
+const ensureStaffPicksTable = async () => {
+  await pool.query(`
+    IF OBJECT_ID('staff_picks', 'U') IS NULL
+    BEGIN
+      CREATE TABLE staff_picks (
+        id INT IDENTITY(1,1) PRIMARY KEY,
+        book_id INT NOT NULL UNIQUE,
+        sort_order INT NOT NULL DEFAULT 0,
+        created_at DATETIME DEFAULT GETDATE(),
+        CONSTRAINT FK_staff_picks_book FOREIGN KEY (book_id) REFERENCES books(id) ON DELETE CASCADE
+      );
+    END
+  `);
+};
+
 export const getAllBooks = async (req, res) => {
   try {
     const {
@@ -92,6 +107,29 @@ export const getAllBooks = async (req, res) => {
     res.status(500).json({
       success: false,
       message: "Error fetching books",
+    });
+  }
+};
+
+export const getStaffPicks = async (req, res) => {
+  try {
+    await ensureStaffPicksTable();
+    const result = await pool.query(
+      `SELECT b.*, sp.sort_order
+       FROM staff_picks sp
+       JOIN books b ON sp.book_id = b.id
+       ORDER BY sp.sort_order ASC, sp.created_at ASC`,
+    );
+
+    res.json({
+      success: true,
+      books: result.rows,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      success: false,
+      message: "Error fetching staff picks",
     });
   }
 };

@@ -7,6 +7,8 @@ import {
   deleteAdminUser,
   updateUserRole,
   getAdminBooks,
+  getStaffPicks,
+  updateStaffPicks,
   getAdminOrders,
   updateOrderStatus,
   getAdminStats,
@@ -14,16 +16,18 @@ import {
 
 const router = express.Router();
 
-router.use(authenticateToken, authorizeRole("admin"));
+router.get("/users", authenticateToken, authorizeRole("admin"), getAdminUsers);
+router.post("/users", authenticateToken, authorizeRole("admin"), createAdminUser);
+router.put("/users/:userId", authenticateToken, authorizeRole("admin"), updateAdminUser);
+router.delete("/users/:userId", authenticateToken, authorizeRole("admin"), deleteAdminUser);
+router.put("/users/:userId/role", authenticateToken, authorizeRole("admin"), updateUserRole);
 
-router.get("/users", getAdminUsers);
-router.post("/users", createAdminUser);
-router.put("/users/:userId", updateAdminUser);
-router.delete("/users/:userId", deleteAdminUser);
-router.put("/users/:userId/role", updateUserRole);
-router.get("/books", getAdminBooks);
-router.get("/orders", getAdminOrders);
-router.get("/stats", getAdminStats);
-router.put("/orders/:orderId/status", updateOrderStatus);
+router.get("/books", authenticateToken, authorizeRole("admin", "staff"), getAdminBooks);
+router.get("/staff-picks", authenticateToken, authorizeRole("admin", "staff"), getStaffPicks);
+router.put("/staff-picks", authenticateToken, authorizeRole("admin", "staff"), updateStaffPicks);
+
+router.get("/orders", authenticateToken, authorizeRole("admin"), getAdminOrders);
+router.get("/stats", authenticateToken, authorizeRole("admin"), getAdminStats);
+router.put("/orders/:orderId/status", authenticateToken, authorizeRole("admin"), updateOrderStatus);
 
 export default router;

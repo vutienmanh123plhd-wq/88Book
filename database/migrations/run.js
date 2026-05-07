@@ -91,6 +91,26 @@ const createTables = async () => {
     `);
 
     console.log("✅ All tables created successfully!");
+    await pool.query(`
+      IF OBJECT_ID('staff_picks', 'U') IS NULL
+      BEGIN
+        CREATE TABLE staff_picks (
+          id INT IDENTITY(1,1) PRIMARY KEY,
+          book_id INT NOT NULL UNIQUE,
+          sort_order INT NOT NULL DEFAULT 0,
+          created_at DATETIME DEFAULT GETDATE(),
+          FOREIGN KEY (book_id) REFERENCES books(id) ON DELETE CASCADE
+        );
+      END
+    `);
+
+    await pool.query(`
+      IF NOT EXISTS (SELECT 1 FROM users WHERE email = 'staff@bookhaven.local')
+      BEGIN
+        INSERT INTO users (email, password, full_name, role)
+        VALUES ('staff@bookhaven.local', 'Staff@123', 'Demo Staff', 'staff');
+      END
+    `);
   } catch (error) {
     console.error("❌ Error creating tables:", error);
     process.exit(1);

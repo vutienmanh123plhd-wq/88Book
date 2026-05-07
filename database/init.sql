@@ -125,6 +125,18 @@ BEGIN
 END;
 GO
 
+IF OBJECT_ID(N'dbo.staff_picks', N'U') IS NULL
+BEGIN
+    CREATE TABLE dbo.staff_picks (
+        id INT IDENTITY(1,1) PRIMARY KEY,
+        book_id INT NOT NULL UNIQUE,
+        sort_order INT NOT NULL DEFAULT 0,
+        created_at DATETIME DEFAULT GETDATE(),
+        CONSTRAINT FK_staff_picks_book FOREIGN KEY (book_id) REFERENCES dbo.books(id) ON DELETE CASCADE
+    );
+END;
+GO
+
 -- ------------------------------------------------------------
 -- Seed data (safe to rerun)
 -- ------------------------------------------------------------
@@ -143,6 +155,13 @@ IF NOT EXISTS (SELECT 1 FROM dbo.users WHERE email = N'buyer@bookhaven.local')
 BEGIN
     INSERT INTO dbo.users (email, password, full_name, role)
     VALUES (N'buyer@bookhaven.local', N'Buyer@123', N'Demo Buyer', N'buyer');
+END;
+GO
+
+IF NOT EXISTS (SELECT 1 FROM dbo.users WHERE email = N'staff@bookhaven.local')
+BEGIN
+    INSERT INTO dbo.users (email, password, full_name, role)
+    VALUES (N'staff@bookhaven.local', N'Staff@123', N'Demo Staff', N'staff');
 END;
 GO
 
