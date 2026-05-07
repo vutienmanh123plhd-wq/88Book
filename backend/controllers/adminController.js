@@ -1,4 +1,5 @@
 import pool from "../config/database.js";
+import bcrypt from "bcryptjs";
 
 export const getAdminUsers = async (req, res) => {
   try {
@@ -15,6 +16,156 @@ export const getAdminUsers = async (req, res) => {
     res.status(500).json({
       success: false,
       message: "Error fetching users",
+    });
+  }
+};
+
+export const createAdminUser = async (req, res) => {
+  try {
+    const { email, password, fullName, role = "buyer" } = req.body;
+
+    if (!email || !password || !fullName) {
+      return res.status(400).json({
+        success: false,
+        message: "Email, password, and full name are required",
+      });
+    }
+
+    if (!["admin", "buyer"].includes(role)) {
+      return res.status(400).json({
+        success: false,
+        message: "Role must be admin or buyer",
+      });
+    }
+
+    const existingUser = await pool.query("SELECT id FROM users WHERE email = $1", [
+      email,
+    ]);
+    if (existingUser.rows.length > 0) {
+      return res.status(400).json({
+        success: false,
+        message: "Email is already taken",
+      });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const result = await pool.query(
+      "INSERT INTO users (email, password, full_name, role) OUTPUT INSERTED.id, INSERTED.email, INSERTED.full_name, INSERTED.role, INSERTED.created_at VALUES ($1, $2, $3, $4)",
+      [email, hashedPassword, fullName, role],
+    );
+
+    res.status(201).json({
+      success: true,
+      message: "User created",
+      user: result.rows[0],
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      success: false,
+      message: "Error creating user",
+    });
+  }
+};
+
+export const updateAdminUser = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const { email, fullName, role, password } = req.body;
+
+    if (role && !["admin", "buyer"].includes(role)) {
+      return res.status(400).json({
+        success: false,
+        message: "Role must be admin or buyer",
+      });
+    }
+
+    if (Number(userId) === Number(req.user.userId) && role && role !== "admin") {
+      return res.status(400).json({
+        success: false,
+        message: "You cannot remove your own admin role",
+      });
+    }
+
+    if (email) {
+      const existingUser = await pool.query(
+        "SELECT id FROM users WHERE email = $1 AND id != $2",
+        [email, userId],
+      );
+      if (existingUser.rows.length > 0) {
+        return res.status(400).json({
+          success: false,
+          message: "Email is already taken",
+        });
+      }
+    }
+
+    const hashedPassword = password ? await bcrypt.hash(password, 10) : null;
+    const result = await pool.query(
+      `UPDATE users
+       SET email = COALESCE($1, email),
+           full_name = COALESCE($2, full_name),
+           role = COALESCE($3, role),
+           password = COALESCE($4, password),
+           updated_at = GETDATE()
+       OUTPUT INSERTED.id, INSERTED.email, INSERTED.full_name, INSERTED.role, INSERTED.created_at
+       WHERE id = $5`,
+      [email, fullName, role, hashedPassword, userId],
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    res.json({
+      success: true,
+      message: "User updated",
+      user: result.rows[0],
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      success: false,
+      message: "Error updating user",
+    });
+  }
+};
+
+export const deleteAdminUser = async (req, res) => {
+  try {
+    const { userId } = req.params;
+
+    if (Number(userId) === Number(req.user.userId)) {
+      return res.status(400).json({
+        success: false,
+        message: "You cannot delete your own account",
+      });
+    }
+
+    const result = await pool.query(
+      "DELETE FROM users OUTPUT DELETED.id WHERE id = $1",
+      [userId],
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    res.json({
+      success: true,
+      message: "User deleted",
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      success: false,
+      message: "Error deleting user. Remove related orders, cart items, addresses, or wishlist records first.",
     });
   }
 };

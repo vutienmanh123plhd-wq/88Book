@@ -137,6 +137,9 @@ export const ordersAPI = {
 // Admin API
 export const adminAPI = {
   getUsers: () => apiClient.get("/admin/users"),
+  createUser: (user) => apiClient.post("/admin/users", user),
+  updateUser: (userId, user) => apiClient.put(`/admin/users/${userId}`, user),
+  deleteUser: (userId) => apiClient.delete(`/admin/users/${userId}`),
   updateUserRole: (userId, role) =>
     apiClient.put(`/admin/users/${userId}/role`, { role }),
   getBooks: (page = 1, limit = 20) =>
