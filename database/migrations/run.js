@@ -130,12 +130,16 @@ const createTables = async () => {
 
       IF @booksConstraintName IS NOT NULL
       BEGIN
-        EXEC('ALTER TABLE books DROP CONSTRAINT ' + @booksConstraintName);
+        DECLARE @dropBooksConstraintSql NVARCHAR(MAX);
+        SET @dropBooksConstraintSql = N'ALTER TABLE books DROP CONSTRAINT ' + QUOTENAME(@booksConstraintName);
+        EXEC sp_executesql @dropBooksConstraintSql;
       END
 
       IF COL_LENGTH('books', @legacyBookOwnerColumn) IS NOT NULL
       BEGIN
-        EXEC('ALTER TABLE books DROP COLUMN ' + @legacyBookOwnerColumn);
+        DECLARE @dropBooksColumnSql NVARCHAR(MAX);
+        SET @dropBooksColumnSql = N'ALTER TABLE books DROP COLUMN ' + QUOTENAME(@legacyBookOwnerColumn);
+        EXEC sp_executesql @dropBooksColumnSql;
       END
     `);
 
@@ -165,12 +169,16 @@ const createTables = async () => {
 
       IF @itemsConstraintName IS NOT NULL
       BEGIN
-        EXEC('ALTER TABLE order_items DROP CONSTRAINT ' + @itemsConstraintName);
+        DECLARE @dropItemsConstraintSql NVARCHAR(MAX);
+        SET @dropItemsConstraintSql = N'ALTER TABLE order_items DROP CONSTRAINT ' + QUOTENAME(@itemsConstraintName);
+        EXEC sp_executesql @dropItemsConstraintSql;
       END
 
       IF COL_LENGTH('order_items', @legacyItemOwnerColumn) IS NOT NULL
       BEGIN
-        EXEC('ALTER TABLE order_items DROP COLUMN ' + @legacyItemOwnerColumn);
+        DECLARE @dropItemsColumnSql NVARCHAR(MAX);
+        SET @dropItemsColumnSql = N'ALTER TABLE order_items DROP COLUMN ' + QUOTENAME(@legacyItemOwnerColumn);
+        EXEC sp_executesql @dropItemsColumnSql;
       END
     `);
 

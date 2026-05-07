@@ -161,7 +161,9 @@ WHERE fk.parent_object_id = OBJECT_ID(N'dbo.books') AND c.name = N'seller_id';
 
 IF @booksLegacyFk IS NOT NULL
 BEGIN
-    EXEC(N'ALTER TABLE dbo.books DROP CONSTRAINT ' + QUOTENAME(@booksLegacyFk));
+    DECLARE @dropBooksLegacyFkSql NVARCHAR(MAX);
+    SET @dropBooksLegacyFkSql = N'ALTER TABLE dbo.books DROP CONSTRAINT ' + QUOTENAME(@booksLegacyFk);
+    EXEC sp_executesql @dropBooksLegacyFkSql;
 END;
 GO
 
@@ -194,7 +196,9 @@ WHERE fk.parent_object_id = OBJECT_ID(N'dbo.order_items') AND c.name = N'seller_
 
 IF @itemsLegacyFk IS NOT NULL
 BEGIN
-    EXEC(N'ALTER TABLE dbo.order_items DROP CONSTRAINT ' + QUOTENAME(@itemsLegacyFk));
+    DECLARE @dropItemsLegacyFkSql NVARCHAR(MAX);
+    SET @dropItemsLegacyFkSql = N'ALTER TABLE dbo.order_items DROP CONSTRAINT ' + QUOTENAME(@itemsLegacyFk);
+    EXEC sp_executesql @dropItemsLegacyFkSql;
 END;
 GO
 
