@@ -315,7 +315,16 @@ function AppContent() {
   // Filtered books for special pages
   const newArrivals = [...books].sort((a, b) => b.id - a.id).slice(0, 12);
   const bestsellers = [...books].sort((a, b) => (Number(b.rating) || 0) - (Number(a.rating) || 0)).slice(0, 12);
-  const displayedStaffPicks = staffPicks.length > 0 ? staffPicks : books.slice(4, 7);
+  const displayedStaffPicks = (staffPicks.length > 0 ? staffPicks : books.slice(4, 7)).map((book: any) => ({
+    ...book,
+    id: book.id.toString(),
+    coverImage:
+      book.coverImage ||
+      book.image_url ||
+      "https://images.unsplash.com/photo-1507842872392-6f3ee53daf26?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400",
+    rating: Number(book.rating) || 4.5,
+    description: book.description || "No description available",
+  }));
   const searchSuggestions = Array.from(
     new Set(
       [
@@ -463,35 +472,22 @@ function AppContent() {
                 Recommendations handpicked by the BookHaven team from readers'
                 favorite titles.
               </p>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {displayedStaffPicks.map((book) => (
-                  <article
+                  <BookCard
                     key={`staff-${book.id}`}
-                    className="reveal-on-scroll bg-card border border-border rounded-2xl p-5"
-                  >
-                    <p className="text-xs uppercase tracking-wide text-primary mb-2">
-                      Staff recommends
-                    </p>
-                    <h3 className="text-xl font-semibold mb-1">{book.title}</h3>
-                    <p className="text-sm text-muted-foreground mb-4">
-                      by {book.author}
-                    </p>
-                    <button
-                      onClick={() => {
-                        setSelectedBook({
-                          ...book,
-                          id: book.id.toString(),
-                          coverImage: book.image_url || "https://via.placeholder.com/400",
-                          rating: Number(book.rating) || 4.5,
-                          description: book.description || "No description available"
-                        });
-                        setIsModalOpen(true);
-                      }}
-                      className="text-accent font-semibold hover:underline"
-                    >
-                      Read why we picked this
-                    </button>
-                  </article>
+                    book={book}
+                    badge="Staff Pick"
+                    onAddToCart={handleAddToCart}
+                    onViewDetails={(selected) => {
+                      setSelectedBook(selected);
+                      setIsModalOpen(true);
+                    }}
+                    onToggleWishlist={handleToggleWishlist}
+                    isWishlisted={wishlist.some(
+                      (w) => w.id.toString() === book.id.toString(),
+                    )}
+                  />
                 ))}
               </div>
             </div>
