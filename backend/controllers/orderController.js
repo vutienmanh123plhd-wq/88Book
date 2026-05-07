@@ -31,7 +31,7 @@ export const createOrder = async (req, res) => {
 
     // Get cart items
     const cartResult = await pool.query(
-      `SELECT ci.book_id, ci.quantity, b.price, b.seller_id
+      `SELECT ci.book_id, ci.quantity, b.price, b.admin_id
        FROM cart_items ci
        JOIN books b ON ci.book_id = b.id
        WHERE ci.user_id = $1`,
@@ -64,9 +64,9 @@ export const createOrder = async (req, res) => {
     // Create order items
     for (const item of cartItems) {
       await pool.query(
-        `INSERT INTO order_items (order_id, book_id, quantity, price, seller_id)
+        `INSERT INTO order_items (order_id, book_id, quantity, price, admin_id)
          VALUES ($1, $2, $3, $4, $5)`,
-        [order.id, item.book_id, item.quantity, item.price, item.seller_id],
+        [order.id, item.book_id, item.quantity, item.price, item.admin_id],
       );
 
       // Reduce book quantity

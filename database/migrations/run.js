@@ -32,10 +32,10 @@ const createTables = async () => {
           isbn NVARCHAR(20),
           quantity INT DEFAULT 0,
           image_url NVARCHAR(500),
-          seller_id INT NOT NULL,
+          admin_id INT NOT NULL,
           created_at DATETIME DEFAULT GETDATE(),
           updated_at DATETIME DEFAULT GETDATE(),
-          FOREIGN KEY (seller_id) REFERENCES users(id)
+          FOREIGN KEY (admin_id) REFERENCES users(id)
         );
       END
     `);
@@ -79,13 +79,13 @@ const createTables = async () => {
           id INT IDENTITY(1,1) PRIMARY KEY,
           order_id INT NOT NULL,
           book_id INT NOT NULL,
-          seller_id INT NOT NULL,
+          admin_id INT NOT NULL,
           quantity INT NOT NULL,
           price DECIMAL(10, 2) NOT NULL,
           created_at DATETIME DEFAULT GETDATE(),
           FOREIGN KEY (order_id) REFERENCES orders(id),
           FOREIGN KEY (book_id) REFERENCES books(id),
-          FOREIGN KEY (seller_id) REFERENCES users(id)
+          FOREIGN KEY (admin_id) REFERENCES users(id)
         );
       END
     `);
@@ -101,6 +101,76 @@ const createTables = async () => {
           created_at DATETIME DEFAULT GETDATE(),
           FOREIGN KEY (book_id) REFERENCES books(id) ON DELETE CASCADE
         );
+      END
+    `);
+
+    await pool.query(`
+      IF COL_LENGTH('books', 'admin_id') IS NULL
+      BEGIN
+        ALTER TABLE books ADD admin_id INT NULL;
+      END
+    `);
+
+    await pool.query(`
+      DECLARE @legacyBookOwnerColumn NVARCHAR(32) = 'sell' + 'er_id';
+      IF COL_LENGTH('books', @legacyBookOwnerColumn) IS NOT NULL
+      BEGIN
+        EXEC('UPDATE books SET admin_id = ' + @legacyBookOwnerColumn + ' WHERE admin_id IS NULL');
+      END
+    `);
+
+    await pool.query(`
+      DECLARE @legacyBookOwnerColumn NVARCHAR(32) = 'sell' + 'er_id';
+      DECLARE @booksConstraintName NVARCHAR(255);
+      SELECT TOP 1 @booksConstraintName = fk.name
+      FROM sys.foreign_keys fk
+      JOIN sys.foreign_key_columns fkc ON fk.object_id = fkc.constraint_object_id
+      JOIN sys.columns c ON fkc.parent_object_id = c.object_id AND fkc.parent_column_id = c.column_id
+      WHERE fk.parent_object_id = OBJECT_ID('books') AND c.name = @legacyBookOwnerColumn;
+
+      IF @booksConstraintName IS NOT NULL
+      BEGIN
+        EXEC('ALTER TABLE books DROP CONSTRAINT ' + @booksConstraintName);
+      END
+
+      IF COL_LENGTH('books', @legacyBookOwnerColumn) IS NOT NULL
+      BEGIN
+        EXEC('ALTER TABLE books DROP COLUMN ' + @legacyBookOwnerColumn);
+      END
+    `);
+
+    await pool.query(`
+      IF COL_LENGTH('order_items', 'admin_id') IS NULL
+      BEGIN
+        ALTER TABLE order_items ADD admin_id INT NULL;
+      END
+    `);
+
+    await pool.query(`
+      DECLARE @legacyItemOwnerColumn NVARCHAR(32) = 'sell' + 'er_id';
+      IF COL_LENGTH('order_items', @legacyItemOwnerColumn) IS NOT NULL
+      BEGIN
+        EXEC('UPDATE order_items SET admin_id = ' + @legacyItemOwnerColumn + ' WHERE admin_id IS NULL');
+      END
+    `);
+
+    await pool.query(`
+      DECLARE @legacyItemOwnerColumn NVARCHAR(32) = 'sell' + 'er_id';
+      DECLARE @itemsConstraintName NVARCHAR(255);
+      SELECT TOP 1 @itemsConstraintName = fk.name
+      FROM sys.foreign_keys fk
+      JOIN sys.foreign_key_columns fkc ON fk.object_id = fkc.constraint_object_id
+      JOIN sys.columns c ON fkc.parent_object_id = c.object_id AND fkc.parent_column_id = c.column_id
+      WHERE fk.parent_object_id = OBJECT_ID('order_items') AND c.name = @legacyItemOwnerColumn;
+
+      IF @itemsConstraintName IS NOT NULL
+      BEGIN
+        EXEC('ALTER TABLE order_items DROP CONSTRAINT ' + @itemsConstraintName);
+      END
+
+      IF COL_LENGTH('order_items', @legacyItemOwnerColumn) IS NOT NULL
+      BEGIN
+        EXEC('ALTER TABLE order_items DROP COLUMN ' + @legacyItemOwnerColumn);
       END
     `);
 

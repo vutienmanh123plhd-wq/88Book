@@ -14,7 +14,7 @@ Your **complete, fully-functional book selling website** has been created with a
 - Book management (create, read, update, delete)
 - Shopping cart functionality
 - Order processing & history
-- Seller dashboard & analytics
+- Admin dashboard & analytics
 - User profiles & settings
 - Role-based access control
 
@@ -24,7 +24,7 @@ Your **complete, fully-functional book selling website** has been created with a
 - Real-time API integration
 - Shopping cart with live updates
 - User authentication flow
-- Seller interface
+- Admin interface
 - Account management
 
 ### ✅ SQL Server Database
@@ -208,7 +208,7 @@ See: **[VERIFICATION_CHECKLIST.md](./VERIFICATION_CHECKLIST.md)**
 
 ### 👥 User Management
 
-- Register as Buyer or Seller
+- Register as Buyer or sign in as Admin
 - Secure login with JWT
 - Update profile
 - Change password
@@ -236,7 +236,7 @@ See: **[VERIFICATION_CHECKLIST.md](./VERIFICATION_CHECKLIST.md)**
 - Order confirmation
 - Order history tracking
 
-### 👨‍💼 Seller Dashboard
+### Admin Dashboard
 
 - Add new books
 - Manage inventory
@@ -259,9 +259,9 @@ GET    /api/auth/me            - Check session
 # Books
 GET    /api/books               - Browse books
 GET    /api/books/:id          - Book details
-POST   /api/books              - Add book (seller)
-PUT    /api/books/:id          - Edit book (seller)
-DELETE /api/books/:id          - Delete book (seller)
+POST   /api/books              - Add book (admin)
+PUT    /api/books/:id          - Edit book (admin)
+DELETE /api/books/:id          - Delete book (admin)
 
 # Shopping
 GET    /api/cart               - View cart
@@ -274,10 +274,10 @@ POST   /api/orders             - Create order
 GET    /api/orders             - View orders
 GET    /api/orders/:id         - Order details
 
-# Seller
-GET    /api/seller/books       - My books
-GET    /api/seller/orders      - My sales
-GET    /api/seller/stats       - Statistics
+# Admin
+GET    /api/admin/books        - Books
+GET    /api/admin/orders       - Orders
+GET    /api/admin/stats        - Statistics
 ```
 
 ---
@@ -328,7 +328,7 @@ kill -9 <PID>
 ### Short Term (This week)
 
 - [ ] Add sample book data
-- [ ] Test seller features
+- [ ] Test admin features
 - [ ] Customize styling/colors
 - [ ] Set up backups
 
@@ -459,7 +459,7 @@ Your complete book selling website is ready. Everything works together:
 - **API**: ✅ Express with 26+ endpoints
 - **Frontend**: ✅ React with state management
 - **Auth**: ✅ JWT with role-based access
-- **Features**: ✅ Browse, cart, checkout, seller dashboard
+- **Features**: ✅ Browse, cart, checkout, admin dashboard
 
 **Just run the setup commands and you're good to go!** 🚀
 

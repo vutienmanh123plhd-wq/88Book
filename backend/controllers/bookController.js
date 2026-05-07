@@ -172,7 +172,7 @@ export const createBook = async (req, res) => {
       imageUrl,
       image_url,
     } = req.body;
-    const sellerId = req.user.userId;
+    const adminId = req.user.userId;
 
     if (!title || !author || !price || !category) {
       return res.status(400).json({
@@ -182,7 +182,7 @@ export const createBook = async (req, res) => {
     }
 
     const result = await pool.query(
-      "INSERT INTO books (title, author, description, price, category, isbn, quantity, image_url, seller_id) OUTPUT INSERTED.* VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)",
+      "INSERT INTO books (title, author, description, price, category, isbn, quantity, image_url, admin_id) OUTPUT INSERTED.* VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)",
       [
         title,
         author,
@@ -192,7 +192,7 @@ export const createBook = async (req, res) => {
         isbn,
         quantity || 0,
         imageUrl || image_url,
-        sellerId,
+        adminId,
       ],
     );
 
@@ -227,7 +227,7 @@ export const updateBook = async (req, res) => {
     const isAdmin = req.user.role === "admin";
 
     const result = await pool.query(
-      `UPDATE books SET title = $1, author = $2, description = $3, price = $4, category = $5, isbn = $6, quantity = $7, image_url = $8, updated_at = GETDATE() OUTPUT INSERTED.* WHERE id = $9${isAdmin ? "" : " AND seller_id = $10"}`,
+      `UPDATE books SET title = $1, author = $2, description = $3, price = $4, category = $5, isbn = $6, quantity = $7, image_url = $8, updated_at = GETDATE() OUTPUT INSERTED.* WHERE id = $9${isAdmin ? "" : " AND admin_id = $10"}`,
       isAdmin
         ? [
             title,
@@ -281,7 +281,7 @@ export const deleteBook = async (req, res) => {
     const isAdmin = req.user.role === "admin";
 
     const result = await pool.query(
-      `DELETE FROM books OUTPUT DELETED.id WHERE id = $1${isAdmin ? "" : " AND seller_id = $2"}`,
+      `DELETE FROM books OUTPUT DELETED.id WHERE id = $1${isAdmin ? "" : " AND admin_id = $2"}`,
       isAdmin ? [id] : [id, req.user.userId],
     );
 

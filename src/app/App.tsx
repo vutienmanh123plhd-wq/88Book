@@ -332,8 +332,8 @@ function AppContent() {
 
   // Filtered books for special pages
   const newArrivals = [...books].sort((a, b) => b.id - a.id).slice(0, 12);
-  const bestsellers = [...books].sort((a, b) => (Number(b.rating) || 0) - (Number(a.rating) || 0)).slice(0, 12);
-  const displayedRecommendations = (recommendations.length > 0 ? recommendations : books.slice(4, 7)).map((book: any) => ({
+  const topRated = [...books].sort((a, b) => (Number(b.rating) || 0) - (Number(a.rating) || 0)).slice(0, 12);
+  const displayedRecommendations = recommendations.map((book: any) => ({
     ...book,
     id: book.id.toString(),
     coverImage:
@@ -416,10 +416,10 @@ function AppContent() {
                     Explore new books <ArrowRight className="ml-2 h-4 w-4" />
                   </button>
                   <button
-                    onClick={() => handleNavigate("bestsellers")}
+                    onClick={() => handleNavigate("top-rated")}
                     className="inline-flex items-center justify-center px-6 py-3 bg-background border border-border text-foreground rounded-lg hover:bg-secondary transition-colors font-semibold"
                   >
-                    View bestsellers
+                    View top rated
                   </button>
                 </div>
               </div>
@@ -489,8 +489,13 @@ function AppContent() {
               <p className="text-muted-foreground mb-8">
                 Handpicked titles from BookHaven's favorite reads.
               </p>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-                {displayedRecommendations.map((book) => (
+              {displayedRecommendations.length === 0 ? (
+                <p className="text-muted-foreground">
+                  There's no recommendations
+                </p>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+                  {displayedRecommendations.map((book) => (
                   <button
                     key={`recommendation-${book.id}`}
                     type="button"
@@ -514,8 +519,9 @@ function AppContent() {
                       View details
                     </span>
                   </button>
-                ))}
-              </div>
+                  ))}
+                </div>
+              )}
             </div>
           </section>
 
@@ -616,12 +622,12 @@ function AppContent() {
         </main>
       )}
 
-      {currentPage === "bestsellers" && (
+      {currentPage === "top-rated" && (
         <main className="py-8 px-4 sm:px-6 lg:px-8">
           <div className="max-w-7xl mx-auto">
-            <h1 className="mb-8">Bestsellers</h1>
+            <h1 className="mb-8">Top Rated</h1>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              {bestsellers.map((book) => (
+              {topRated.map((book) => (
                 <BookCard
                   key={book.id}
                   book={{
@@ -631,7 +637,7 @@ function AppContent() {
                     rating: Number(book.rating) || 4.5,
                     description: book.description || "No description available"
                   }}
-                  badge="Bestseller"
+                  badge="Top Rated"
                   onAddToCart={handleAddToCart}
                   onViewDetails={(b) => {
                     setSelectedBook(b);

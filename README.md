@@ -41,9 +41,9 @@ Du an website ban sach gom 3 thanh phan chinh: `frontend` (giao dien), `backend`
 - **Account**
   - Dang ky, dang nhap, dang xuat.
   - Hien thi profile va cac thong tin tai khoan.
-- **Seller dashboard**
+- **Admin dashboard**
   - Them/sua/xoa sach.
-  - Xem danh sach sach cua seller.
+  - Xem danh sach sach cua admin.
 
 ### API client tren frontend
 
@@ -55,7 +55,7 @@ File `src/api/client.js` dong vai tro wrapper cho toan bo request:
   - `booksAPI`: CRUD sach + filter/pagination.
   - `cartAPI`: CRUD gio hang.
   - `ordersAPI`: tao don, lay don, huy don, endpoint admin.
-  - `sellerAPI`: sach/don/thong ke cua seller.
+  - `adminAPI`: sach/don/thong ke cua admin.
   - `usersAPI`: profile user.
 
 ## 3) Backend
@@ -85,7 +85,7 @@ File `src/api/client.js` dong vai tro wrapper cho toan bo request:
 - **Books**
   - Lay danh sach sach (co filter/search/sort/pagination).
   - Xem chi tiet sach.
-  - Seller tao/sua/xoa sach cua minh.
+  - Admin tao/sua/xoa sach.
 - **Cart**
   - Them sach vao gio.
   - Cap nhat so luong.
@@ -96,11 +96,11 @@ File `src/api/client.js` dong vai tro wrapper cho toan bo request:
   - Xem chi tiet don.
   - Huy don.
   - Admin duyet/cap nhat trang thai don.
-- **Seller**
-  - Lay sach cua seller.
-  - Lay don lien quan seller.
+- **Admin**
+  - Lay sach cua admin.
+  - Lay don lien quan admin.
   - Lay thong ke (so sach, ton kho, doanh thu, don hang).
-  - Cap nhat trang thai don o scope seller.
+  - Cap nhat trang thai don.
 - **Users**
   - Lay/cap nhat profile.
   - Doi mat khau.
@@ -120,9 +120,9 @@ File `src/api/client.js` dong vai tro wrapper cho toan bo request:
 ### Cac bang va y nghia
 
 - `users`
-  - Luu tai khoan, role (`buyer`/`seller`/`admin`), thong tin dang nhap.
+  - Luu tai khoan, role (`buyer`/`admin`), thong tin dang nhap.
 - `books`
-  - Luu catalog sach, thong tin gia, ton kho, seller so huu, rating.
+  - Luu catalog sach, thong tin gia, ton kho, admin quan ly, rating.
 - `cart_items`
   - Luu gio hang theo tung user.
 - `orders`
@@ -132,7 +132,7 @@ File `src/api/client.js` dong vai tro wrapper cho toan bo request:
 
 ### Quan he du lieu
 
-- `users (1) -> (n) books` qua `seller_id`.
+- `users (1) -> (n) books` qua `admin_id`.
 - `users (1) -> (n) cart_items` qua `user_id`.
 - `users (1) -> (n) orders` qua `user_id`.
 - `orders (1) -> (n) order_items` qua `order_id`.
@@ -148,12 +148,12 @@ File `src/api/client.js` dong vai tro wrapper cho toan bo request:
 4. Checkout goi `POST /api/orders`.
 5. Backend tao order + order_items, cap nhat ton kho, clear cart.
 
-### Quan ly ban hang (seller)
+### Quan ly ban hang (admin)
 
-1. Seller dang nhap.
+1. Admin dang nhap.
 2. Tao/sua/xoa sach qua `POST/PUT/DELETE /api/books/:id`.
-3. Theo doi don qua `GET /api/seller/orders`.
-4. Cap nhat trang thai don qua `PUT /api/seller/orders/:orderId/status`.
+3. Theo doi don qua `GET /api/admin/orders`.
+4. Cap nhat trang thai don qua `PUT /api/admin/orders/:orderId/status`.
 
 ## 6) Chay du an local
 

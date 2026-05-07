@@ -14,7 +14,7 @@ interface BrowsePageProps {
   onViewDetails?: (book: Book) => void;
   initialCategory?: string;
   initialSearchQuery?: string;
-  initialSection?: "all" | "new-arrivals" | "bestsellers";
+  initialSection?: "all" | "new-arrivals" | "top-rated";
   onToggleWishlist?: (book: Book) => void;
   wishlist?: Book[];
 }
@@ -35,7 +35,7 @@ const categories = [
 const sections = [
   { id: "all" as const, label: "All Books", icon: BookOpen },
   { id: "new-arrivals" as const, label: "New Arrivals", icon: Sparkles },
-  { id: "bestsellers" as const, label: "Bestsellers", icon: TrendingUp },
+  { id: "top-rated" as const, label: "Top Rated", icon: TrendingUp },
 ];
 
 export function BrowsePage({
@@ -51,7 +51,7 @@ export function BrowsePage({
   const [searchQuery, setSearchQuery] = useState(initialSearchQuery);
   const [selectedCategory, setSelectedCategory] = useState(initialCategory);
   const [activeSection, setActiveSection] = useState<
-    "all" | "new-arrivals" | "bestsellers"
+    "all" | "new-arrivals" | "top-rated"
   >(initialSection);
   const [sortBy, setSortBy] = useState<
     "title" | "price-low" | "price-high" | "rating"
@@ -94,8 +94,8 @@ export function BrowsePage({
         return bTime - aTime;
       })
       .slice(0, 12);
-  } else if (activeSection === "bestsellers") {
-    sectionBadge = "Bestseller";
+  } else if (activeSection === "top-rated") {
+    sectionBadge = "Top Rated";
     sectionBooks = [...formattedBooks]
       .filter((book) => Number(book.rating) >= 4.5)
       .sort((a, b) => (Number(b.rating) || 0) - (Number(a.rating) || 0))
@@ -163,7 +163,7 @@ export function BrowsePage({
               ✨ Showing the latest books added to our collection
             </p>
           )}
-          {activeSection === "bestsellers" && (
+          {activeSection === "top-rated" && (
             <p className="mt-3 text-sm text-muted-foreground">
               🔥 Showing the highest rated books loved by our readers
             </p>

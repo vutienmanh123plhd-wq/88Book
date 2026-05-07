@@ -6,8 +6,8 @@ This is a complete **full-stack e-commerce platform** with:
 
 - **Frontend**: React + TypeScript + Vite (responsive UI)
 - **Backend**: Node.js + Express + SQL Server (REST API)
-- **Authentication**: JWT-based auth with role-based access (Buyer/Seller)
-- **Features**: Book browsing, shopping cart, checkout, seller dashboard, order management
+- **Authentication**: JWT-based auth with role-based access (Buyer/Admin)
+- **Features**: Book browsing, shopping cart, checkout, admin dashboard, order management
 
 ## Project Structure
 
@@ -181,7 +181,7 @@ Both should be running:
 
 - Click "Account" or menu icon
 - Click "Sign Up" or "Sign In"
-- Register as a **Buyer** or **Seller**
+- Register as a **Buyer** or sign in as **Admin**
 - Login with your credentials
 
 ### 2. **Browse Books** (No login required)
@@ -204,17 +204,17 @@ Both should be running:
 - Complete order
 - View order in Account page
 
-### 5. **Seller Dashboard** (Requires seller login)
+### 5. **Admin Dashboard** (Requires admin login)
 
-- Login as seller
+- Login as admin
 - Navigate to Account page
-- See "Seller Dashboard" tab
+- See "Admin Dashboard" tab
 - Manage books and view sales
 
 ### 6. **Admin Functions**
 
-- API supports user roles: buyer, seller, admin
-- Sellers can only manage their own books
+- API supports user roles: buyer, admin
+- Admins manage books
 - Protected endpoints require JWT token
 
 ## API Endpoints (Backend)
@@ -232,9 +232,9 @@ GET    /api/auth/me             # Get current user (protected)
 ```bash
 GET    /api/books               # Get all books (with filters)
 GET    /api/books/:id           # Get single book
-POST   /api/books               # Create book (sellers only)
-PUT    /api/books/:id           # Update book (sellers only)
-DELETE /api/books/:id           # Delete book (sellers only)
+POST   /api/books               # Create book (admins only)
+PUT    /api/books/:id           # Update book (admins only)
+DELETE /api/books/:id           # Delete book (admins only)
 ```
 
 ### Shopping Cart
@@ -255,13 +255,13 @@ GET    /api/orders/:id          # Get order details (protected)
 PUT    /api/orders/:id/cancel   # Cancel order (protected)
 ```
 
-### Seller APIs
+### Admin APIs
 
 ```bash
-GET    /api/seller/books        # Seller's books (protected, sellers only)
-GET    /api/seller/orders       # Seller's orders (protected, sellers only)
-GET    /api/seller/stats        # Seller statistics (protected, sellers only)
-PUT    /api/seller/orders/:id/status  # Update order status (protected)
+GET    /api/admin/books         # Books (protected, admins only)
+GET    /api/admin/orders        # Orders (protected, admins only)
+GET    /api/admin/stats         # Statistics (protected, admins only)
+PUT    /api/admin/orders/:id/status  # Update order status (protected)
 ```
 
 ## Testing with cURL
