@@ -1,15 +1,15 @@
 import pool from "../config/database.js";
 
-const ensureStaffPicksTable = async () => {
+const ensureRecommendationsTable = async () => {
   await pool.query(`
-    IF OBJECT_ID('staff_picks', 'U') IS NULL
+    IF OBJECT_ID('recommendations', 'U') IS NULL
     BEGIN
-      CREATE TABLE staff_picks (
+      CREATE TABLE recommendations (
         id INT IDENTITY(1,1) PRIMARY KEY,
         book_id INT NOT NULL UNIQUE,
         sort_order INT NOT NULL DEFAULT 0,
         created_at DATETIME DEFAULT GETDATE(),
-        CONSTRAINT FK_staff_picks_book FOREIGN KEY (book_id) REFERENCES books(id) ON DELETE CASCADE
+        CONSTRAINT FK_recommendations_book FOREIGN KEY (book_id) REFERENCES books(id) ON DELETE CASCADE
       );
     END
   `);
@@ -111,12 +111,12 @@ export const getAllBooks = async (req, res) => {
   }
 };
 
-export const getStaffPicks = async (req, res) => {
+export const getRecommendations = async (req, res) => {
   try {
-    await ensureStaffPicksTable();
+    await ensureRecommendationsTable();
     const result = await pool.query(
       `SELECT b.*, sp.sort_order
-       FROM staff_picks sp
+       FROM recommendations sp
        JOIN books b ON sp.book_id = b.id
        ORDER BY sp.sort_order ASC, sp.created_at ASC`,
     );

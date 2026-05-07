@@ -125,14 +125,14 @@ BEGIN
 END;
 GO
 
-IF OBJECT_ID(N'dbo.staff_picks', N'U') IS NULL
+IF OBJECT_ID(N'dbo.recommendations', N'U') IS NULL
 BEGIN
-    CREATE TABLE dbo.staff_picks (
+    CREATE TABLE dbo.recommendations (
         id INT IDENTITY(1,1) PRIMARY KEY,
         book_id INT NOT NULL UNIQUE,
         sort_order INT NOT NULL DEFAULT 0,
         created_at DATETIME DEFAULT GETDATE(),
-        CONSTRAINT FK_staff_picks_book FOREIGN KEY (book_id) REFERENCES dbo.books(id) ON DELETE CASCADE
+        CONSTRAINT FK_recommendations_book FOREIGN KEY (book_id) REFERENCES dbo.books(id) ON DELETE CASCADE
     );
 END;
 GO

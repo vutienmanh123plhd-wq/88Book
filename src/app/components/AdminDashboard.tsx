@@ -593,14 +593,6 @@ export function AdminDashboard({
                       onChange={() => toggleRecommendation(book.id)}
                       className="mt-1"
                     />
-                    <img
-                      src={
-                        book.image_url ||
-                        "https://via.placeholder.com/120x160?text=Book"
-                      }
-                      alt={book.title}
-                      className="h-16 w-11 rounded border border-border object-cover"
-                    />
                     <span className="min-w-0">
                       <span className="block text-sm font-medium truncate">
                         {book.title}

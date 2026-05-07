@@ -3,16 +3,16 @@ import bcrypt from "bcryptjs";
 
 const editableRoles = ["admin", "buyer"];
 
-const ensureStaffPicksTable = async () => {
+const ensureRecommendationsTable = async () => {
   await pool.query(`
-    IF OBJECT_ID('staff_picks', 'U') IS NULL
+    IF OBJECT_ID('recommendations', 'U') IS NULL
     BEGIN
-      CREATE TABLE staff_picks (
+      CREATE TABLE recommendations (
         id INT IDENTITY(1,1) PRIMARY KEY,
         book_id INT NOT NULL UNIQUE,
         sort_order INT NOT NULL DEFAULT 0,
         created_at DATETIME DEFAULT GETDATE(),
-        CONSTRAINT FK_staff_picks_book FOREIGN KEY (book_id) REFERENCES books(id) ON DELETE CASCADE
+        CONSTRAINT FK_recommendations_book FOREIGN KEY (book_id) REFERENCES books(id) ON DELETE CASCADE
       );
     END
   `);
@@ -266,12 +266,12 @@ export const getAdminBooks = async (req, res) => {
   }
 };
 
-export const getStaffPicks = async (req, res) => {
+export const getRecommendations = async (req, res) => {
   try {
-    await ensureStaffPicksTable();
+    await ensureRecommendationsTable();
     const result = await pool.query(
       `SELECT b.*, sp.sort_order
-       FROM staff_picks sp
+       FROM recommendations sp
        JOIN books b ON sp.book_id = b.id
        ORDER BY sp.sort_order ASC, sp.created_at ASC`,
     );
@@ -289,7 +289,7 @@ export const getStaffPicks = async (req, res) => {
   }
 };
 
-export const updateStaffPicks = async (req, res) => {
+export const updateRecommendations = async (req, res) => {
   try {
     const { bookIds } = req.body;
 
@@ -304,19 +304,19 @@ export const updateStaffPicks = async (req, res) => {
       .filter((id) => Number.isInteger(id) && id > 0)
       .slice(0, 6);
 
-    await ensureStaffPicksTable();
-    await pool.query("DELETE FROM staff_picks");
+    await ensureRecommendationsTable();
+    await pool.query("DELETE FROM recommendations");
 
     for (const [index, bookId] of uniqueBookIds.entries()) {
       await pool.query(
-        "INSERT INTO staff_picks (book_id, sort_order) VALUES ($1, $2)",
+        "INSERT INTO recommendations (book_id, sort_order) VALUES ($1, $2)",
         [bookId, index],
       );
     }
 
     const result = await pool.query(
       `SELECT b.*, sp.sort_order
-       FROM staff_picks sp
+       FROM recommendations sp
        JOIN books b ON sp.book_id = b.id
        ORDER BY sp.sort_order ASC, sp.created_at ASC`,
     );

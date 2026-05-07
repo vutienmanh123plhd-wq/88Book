@@ -92,9 +92,9 @@ const createTables = async () => {
 
     console.log("✅ All tables created successfully!");
     await pool.query(`
-      IF OBJECT_ID('staff_picks', 'U') IS NULL
+      IF OBJECT_ID('recommendations', 'U') IS NULL
       BEGIN
-        CREATE TABLE staff_picks (
+        CREATE TABLE recommendations (
           id INT IDENTITY(1,1) PRIMARY KEY,
           book_id INT NOT NULL UNIQUE,
           sort_order INT NOT NULL DEFAULT 0,
@@ -103,6 +103,8 @@ const createTables = async () => {
         );
       END
     `);
+
+    await pool.query("UPDATE users SET role = 'buyer' WHERE role NOT IN ('admin', 'buyer')");
 
   } catch (error) {
     console.error("❌ Error creating tables:", error);

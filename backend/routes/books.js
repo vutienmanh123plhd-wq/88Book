@@ -2,7 +2,7 @@ import express from "express";
 import { authenticateToken, authorizeRole } from "../middleware/auth.js";
 import {
   getAllBooks,
-  getStaffPicks,
+  getRecommendations,
   getBookById,
   createBook,
   updateBook,
@@ -13,7 +13,7 @@ const router = express.Router();
 
 // Public routes
 router.get("/", getAllBooks);
-router.get("/recommendations", getStaffPicks);
+router.get("/recommendations", getRecommendations);
 router.get("/:id", getBookById);
 
 // Protected routes (admins only)

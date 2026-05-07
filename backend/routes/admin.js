@@ -7,8 +7,8 @@ import {
   deleteAdminUser,
   updateUserRole,
   getAdminBooks,
-  getStaffPicks,
-  updateStaffPicks,
+  getRecommendations,
+  updateRecommendations,
   getAdminOrders,
   updateOrderStatus,
   getAdminStats,
@@ -23,8 +23,8 @@ router.delete("/users/:userId", authenticateToken, authorizeRole("admin"), delet
 router.put("/users/:userId/role", authenticateToken, authorizeRole("admin"), updateUserRole);
 
 router.get("/books", authenticateToken, authorizeRole("admin"), getAdminBooks);
-router.get("/recommendations", authenticateToken, authorizeRole("admin"), getStaffPicks);
-router.put("/recommendations", authenticateToken, authorizeRole("admin"), updateStaffPicks);
+router.get("/recommendations", authenticateToken, authorizeRole("admin"), getRecommendations);
+router.put("/recommendations", authenticateToken, authorizeRole("admin"), updateRecommendations);
 
 router.get("/orders", authenticateToken, authorizeRole("admin"), getAdminOrders);
 router.get("/stats", authenticateToken, authorizeRole("admin"), getAdminStats);
