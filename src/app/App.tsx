@@ -472,22 +472,31 @@ function AppContent() {
                 Recommendations handpicked by the BookHaven team from readers'
                 favorite titles.
               </p>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
                 {displayedStaffPicks.map((book) => (
-                  <BookCard
+                  <button
                     key={`staff-${book.id}`}
-                    book={book}
-                    badge="Staff Pick"
-                    onAddToCart={handleAddToCart}
-                    onViewDetails={(selected) => {
-                      setSelectedBook(selected);
+                    type="button"
+                    onClick={() => {
+                      setSelectedBook(book);
                       setIsModalOpen(true);
                     }}
-                    onToggleWishlist={handleToggleWishlist}
-                    isWishlisted={wishlist.some(
-                      (w) => w.id.toString() === book.id.toString(),
-                    )}
-                  />
+                    className="reveal-on-scroll bg-card border border-border rounded-2xl p-5 text-left hover:border-primary hover:shadow-md transition-all"
+                  >
+                    <p className="text-xs uppercase tracking-wide text-primary mb-2">
+                      Staff recommends
+                    </p>
+                    <h3 className="text-xl font-semibold mb-1">{book.title}</h3>
+                    <p className="text-sm text-muted-foreground mb-4">
+                      by {book.author}
+                    </p>
+                    <p className="text-sm text-muted-foreground line-clamp-3">
+                      {book.description}
+                    </p>
+                    <span className="inline-block mt-4 text-accent font-semibold">
+                      View details
+                    </span>
+                  </button>
                 ))}
               </div>
             </div>
