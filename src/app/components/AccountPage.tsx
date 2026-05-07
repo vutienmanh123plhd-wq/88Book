@@ -107,6 +107,19 @@ export function AccountPage({
     isDefault: false,
   });
 
+  const demoAccounts = [
+    {
+      label: "Admin",
+      email: "admin@bookhaven.local",
+      password: "Admin@123",
+    },
+    {
+      label: "Buyer",
+      email: "buyer@bookhaven.local",
+      password: "Buyer@123",
+    },
+  ];
+
   const handleSaveProfile = () => {
     onUpdateProfile(profileForm);
     setEditingProfile(false);
@@ -168,6 +181,16 @@ export function AccountPage({
     } finally {
       setAuthLoading(false);
     }
+  };
+
+  const useDemoAccount = (account: (typeof demoAccounts)[number]) => {
+    setAuthMode("login");
+    setAuthError("");
+    setAuthForm({
+      email: account.email,
+      password: account.password,
+      fullName: "",
+    });
   };
 
   // Show login/register form if not logged in
@@ -248,6 +271,45 @@ export function AccountPage({
                       : "Create Account"}
                 </Button>
               </form>
+
+              {authMode === "login" && (
+                <div className="rounded-lg border border-border bg-secondary/40 p-4 space-y-3">
+                  <div>
+                    <p className="font-medium">Demo Accounts</p>
+                    <p className="text-sm text-muted-foreground">
+                      Use a seeded account for local testing.
+                    </p>
+                  </div>
+                  <div className="space-y-2">
+                    {demoAccounts.map((account) => (
+                      <div
+                        key={account.email}
+                        className="flex items-center justify-between gap-3 rounded-md bg-background border border-border p-3"
+                      >
+                        <div className="min-w-0">
+                          <p className="text-sm font-medium">
+                            {account.label}
+                          </p>
+                          <p className="text-xs text-muted-foreground truncate">
+                            {account.email}
+                          </p>
+                          <p className="text-xs text-muted-foreground">
+                            {account.password}
+                          </p>
+                        </div>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          onClick={() => useDemoAccount(account)}
+                        >
+                          Use
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
 
               <div className="relative">
                 <div className="absolute inset-0 flex items-center">
