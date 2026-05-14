@@ -14,6 +14,8 @@ const validatePassword = (password) => {
   }
   return { valid: true };
 };
+
+const verifyPassword = async (rawPassword, storedPassword) => {
   // Backward compatibility for seeded/dev accounts with plain-text password.
   if (storedPassword?.startsWith?.("$2")) {
     return bcrypt.compare(rawPassword, storedPassword);
